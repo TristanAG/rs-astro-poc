@@ -1,8 +1,10 @@
 ---
 export const prerender = false;
 
+import '../styles/global.css';
 import { useStoryblokApi } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import Layout from "../layouts/Layout.astro";
 
 const storyblokApi = useStoryblokApi();
 const slug = Astro.params.slug || 'home';
@@ -14,11 +16,8 @@ const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
 const story = data.story;
 ---
 
-<html lang="en">
-  <head>
-    <title>{story.name}</title>
-  </head>
-  <body>
+<Layout title={story.name}>
+
     <StoryblokComponent blok={story.content} />
-  </body>
-</html>
+
+</Layout>

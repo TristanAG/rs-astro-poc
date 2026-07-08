@@ -1,0 +1,33 @@
+@import "@picocss/pico/css/pico.min.css";
+
+/* Optional little tweaks for the demo */
+
+/* main {
+    max-width: 1000px;
+    margin: auto;
+    padding: 3rem 1.5rem;
+} */
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+section {
+    margin-bottom: 3rem;
+}
+
+.hero {
+    text-align: center;
+    padding: 5rem 0;
+}
+
+.hero h1 {
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--pico-muted-color);
+}
