@@ -1,0 +1,24 @@
+---
+export const prerender = false;
+
+import { useStoryblokApi } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const storyblokApi = useStoryblokApi();
+const slug = Astro.params.slug || 'home';
+
+const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
+  version: 'draft',
+});
+
+const story = data.story;
+---
+
+<html lang="en">
+  <head>
+    <title>{story.name}</title>
+  </head>
+  <body>
+    <StoryblokComponent blok={story.content} />
+  </body>
+</html>
