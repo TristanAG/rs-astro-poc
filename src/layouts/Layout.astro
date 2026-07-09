@@ -1,27 +1,33 @@
 ---
-import "../styles/global.css";
+import '../styles/global.css';
 
-const { title } = Astro.props;
+const { title, settings } = Astro.props;
+const logo = settings?.logo;
 ---
 
 <!doctype html>
-
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{title}</title>
+      </head>
 
   <body>
     <div class="container">
       <header>
-        <h1>ReviewScout POC</h1>
+        {logo?.filename && (
+          <img src={logo.filename} alt={logo.alt || settings.site_name} width="180" />
+        )}
       </header>
 
       <main>
         <slot />
       </main>
+
+      <footer>
+        <small>{settings.footer_text}</small>
+      </footer>
     </div>
   </body>
 </html>

@@ -1,0 +1,21 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+
+const content_area_one = renderRichText(blok.content_area_one);
+const content_area_two = renderRichText(blok.content_area_two);
+const content_area_three = renderRichText(blok.content_area_three);
+---
+
+<section {...storyblokEditable(blok)}>
+    <p set:html={content_area_one}></p>
+   
+    <h3>{blok.how_to_title}</h3>
+
+    <p set:html={content_area_two}></p>
+
+    <h3>{blok.what_are_they_about_title}</h3>
+    
+    <p set:html={content_area_three}></p>
+</section>

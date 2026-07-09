@@ -1,23 +1,22 @@
 ---
 export const prerender = false;
 
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 import { useStoryblokApi } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
-import Layout from "../layouts/Layout.astro";
 
 const storyblokApi = useStoryblokApi();
 const slug = Astro.params.slug || 'home';
 
-const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
-  version: 'draft',
-});
+const [{ data: pageData }, { data: settingsData }] = await Promise.all([
+  storyblokApi.get(`cdn/stories/${slug}`, { version: 'draft' }),
+  storyblokApi.get('cdn/stories/site-settings', { version: 'draft' }),
+]);
 
-const story = data.story;
+const story = pageData.story;
+const settings = settingsData.story.content;
 ---
 
-<Layout title={story.name}>
-
-    <StoryblokComponent blok={story.content} />
-
+<Layout title={story.name} settings={settings}>
+  <StoryblokComponent blok={story.content} />
 </Layout>
