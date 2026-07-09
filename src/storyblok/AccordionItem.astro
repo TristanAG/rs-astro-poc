@@ -1,0 +1,67 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+const content = renderRichText(blok.content);
+---
+
+<div class="accordion-item" data-accordion-item {...storyblokEditable(blok)}>
+  <button class="accordion-trigger" type="button" data-accordion-trigger aria-expanded="false">
+    <span class="accordion-title">{blok.title}</span>
+    <span class="accordion-arrow" aria-hidden="true"></span>
+  </button>
+
+  <div class="accordion-panel" data-accordion-panel>
+    <div class="accordion-panel-inner" set:html={content}></div>
+  </div>
+</div>
+
+<style>
+  .accordion-item {
+    border-bottom: 1px solid var(--pico-muted-border-color);
+  }
+
+  .accordion-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .accordion-title {
+    flex: 1 1 auto;
+  }
+
+  .accordion-arrow {
+    flex: 0 0 auto;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid #8ed1fc;
+    border-bottom: 2px solid #8ed1fc;
+    transform: rotate(45deg);
+    transition: transform 200ms ease;
+  }
+
+  .accordion-item.is-open .accordion-arrow {
+    transform: rotate(-135deg);
+  }
+
+  .accordion-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 250ms ease;
+  }
+
+  .accordion-panel-inner {
+    padding-bottom: 1rem;
+  }
+</style>
