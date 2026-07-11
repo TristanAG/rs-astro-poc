@@ -1,0 +1,18 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+const copy = renderRichText(blok.copy);
+const editors_note = renderRichText(blok.editors_note);
+---
+
+<section {...storyblokEditable(blok)} class="avoid-section">
+  {blok.title && <h2>{blok.title}</h2>}
+  {blok.copy && <p set:html={copy}></p>}
+
+  <p>
+    {blok.editors_note_highlighted_text && <span class="editors-note">{blok.editors_note_highlighted_text}</span>}
+    {blok.editors_note && <span class="editors-note-text" set:html={editors_note}></span>}
+  </p>
+  
+</section>

@@ -1,0 +1,18 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+const copy = renderRichText(blok.copy);
+---
+
+<section {...storyblokEditable(blok)} class="avoid-section">
+  {blok.title && <h2>{blok.title}</h2>}
+  {blok.copy && <p set:html={copy}></p>}
+
+  <div>
+    {blok.items?.map((item) => (
+      <StoryblokComponent blok={item} />
+    ))}
+  </div>
+</section>

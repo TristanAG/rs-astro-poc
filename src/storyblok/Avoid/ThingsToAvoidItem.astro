@@ -1,0 +1,19 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+const copy = renderRichText(blok.copy);
+---
+
+<div class="avoid-item">
+  <h3 class="red">{blok.title}</h3>
+
+  <div class="avoid-item-text" set:html={copy}></div>
+    
+</div>
+
+<style>
+    .red {
+        color: #ff0000;
+    }
+</style>

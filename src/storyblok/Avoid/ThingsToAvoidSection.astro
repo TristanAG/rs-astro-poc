@@ -1,0 +1,28 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+---
+
+<section {...storyblokEditable(blok)} class="avoid-section">
+  {blok.title && <h2>{blok.title}</h2>}
+
+  <h2>
+    {blok.title_before}
+    &nbsp;<span class="red">{blok.title_highlight}</span>&nbsp;
+    {blok.title_after}
+  </h2>
+
+  <div>
+    {blok.items?.map((item) => (
+      <StoryblokComponent blok={item} />
+    ))}
+  </div>
+</section>
+
+<style>
+    .red {
+        color: #ff0000;
+    }
+</style>
