@@ -1,17 +1,31 @@
 ---
+export const prerender = false;
 
+import Layout from '../layouts/Layout.astro';
+import { useStoryblokApi } from '@storyblok/astro';
+
+const storyblokApi = useStoryblokApi();
+
+const [{ data }, { data: settingsData }] = await Promise.all([
+  storyblokApi.get('cdn/stories', {
+    version: 'draft',
+    content_type: 'review_page',
+    per_page: 100,
+  }),
+  storyblokApi.get('cdn/stories/site-settings', { version: 'draft' }),
+]);
+
+const reviews = data.stories;
+const settings = settingsData.story.content;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Reviews" settings={settings}>
+  <h1>Reviews</h1>
+  <ul>
+    {reviews.map((story) => (
+      <li>
+        <a href={`/${story.full_slug}`}>{story.name}</a>
+      </li>
+    ))}
+  </ul>
+</Layout>
