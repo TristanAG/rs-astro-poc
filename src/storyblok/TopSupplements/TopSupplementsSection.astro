@@ -1,0 +1,25 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+const copy = renderRichText(blok.copy);
+const top_5_image = blok.top_5_image;
+---
+
+<section {...storyblokEditable(blok)} class="top-supplements-section">
+  {top_5_image?.filename && (
+    <img
+      src={top_5_image.filename}
+      alt={top_5_image.alt || ''}
+    />
+  )}
+  {blok.title && <h2>{blok.title}</h2>}
+  {blok.copy && <div set:html={copy}></div>}
+
+  <div>
+    {blok.supplement_items?.map((item) => (
+      <StoryblokComponent blok={item} />
+    ))}
+  </div>
+</section>
