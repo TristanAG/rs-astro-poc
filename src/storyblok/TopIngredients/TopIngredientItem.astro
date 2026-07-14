@@ -4,15 +4,33 @@ import { storyblokEditable, renderRichText } from '@storyblok/astro';
 const { blok } = Astro.props;
 const copy = renderRichText(blok.copy);
 const editors_note = renderRichText(blok.editors_note);
+const editors_note_highlighted_text_color = blok.editors_note_highlighted_text_color;
 ---
 
-<section {...storyblokEditable(blok)} class="avoid-section">
-  {blok.title && <h2>{blok.title}</h2>}
-  {blok.copy && <p set:html={copy}></p>}
-
-  <p>
-    {blok.editors_note_highlighted_text && <span class="editors-note">{blok.editors_note_highlighted_text}</span>}
-    {blok.editors_note && <span class="editors-note-text" set:html={editors_note}></span>}
+<div {...storyblokEditable(blok)} class="ingredient-item">
+  <p class="ingredient-item-text">
+    {blok.title && <strong class="ingredient-title">{blok.title} </strong>}
+    {blok.copy && <span class="ingredient-copy" set:html={copy} />}
+    {blok.editors_note_highlighted_text && (
+      <span class="editors-note" style={`background-color: ${editors_note_highlighted_text_color};`}>{blok.editors_note_highlighted_text}</span>
+    )}
+    &nbsp;
+    {blok.editors_note && <span class="editors-note-text" set:html={editors_note} />}
   </p>
-  
-</section>
+</div>
+
+<style>
+  .ingredient-item-text {
+    margin: 0;
+  }
+
+  .ingredient-copy :global(p),
+  .editors-note-text :global(p) {
+    display: inline;
+    margin: 0;
+  }
+  .editors-note {
+    font-style: italic;
+    font-weight: 700;
+  }
+</style>

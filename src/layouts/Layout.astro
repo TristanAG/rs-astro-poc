@@ -1,24 +1,51 @@
 ---
 import '../styles/global.css';
+import { useStoryblokApi } from '@storyblok/astro';
 
 const { title, settings } = Astro.props;
 const logo = settings?.logo;
+
+const storyblokApi = useStoryblokApi();
+const { data } = await storyblokApi.get('cdn/stories', {
+  version: 'draft',
+  content_type: 'review_page',
+  per_page: 100,
+});
+const navPages = data.stories;
 ---
 
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{title}</title>
-      </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
 
   <body>
     <div class="container">
-      <header>
-        {logo?.filename && (
-          <img src={logo.filename} alt={logo.alt || settings.site_name} width="180" />
-        )}
+      <header class="site-header">
+        <a href="/" class="site-logo">
+          {logo?.filename && (
+            <img src={logo.filename} alt={logo.alt || settings.site_name} width="180" />
+          )}
+        </a>
+
+        <details class="nav-menu">
+          <summary class="nav-menu__toggle" aria-label="Open menu">
+            <span class="nav-menu__icon" aria-hidden="true"></span>
+          </summary>
+          <nav class="nav-menu__dropdown">
+            <ul>
+              <li><a href="/">All Reviews</a></li>
+              {navPages.map((story) => (
+                <li>
+                  <a href={`/${story.full_slug}`}>{story.name}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
       </header>
 
       <main>
@@ -29,5 +56,121 @@ const logo = settings?.logo;
         <small>{settings.footer_text}</small>
       </footer>
     </div>
+
+    <script>
+      document.addEventListener('click', (event) => {
+        const menu = document.querySelector('.nav-menu');
+        if (!(menu instanceof HTMLDetailsElement) || !menu.open) return;
+        if (event.target instanceof Node && !menu.contains(event.target)) {
+          menu.open = false;
+        }
+      });
+    </script>
   </body>
 </html>
+
+<style>
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .site-logo {
+    display: inline-flex;
+    line-height: 0;
+  }
+
+  .site-logo img {
+    display: block;
+    height: auto;
+  }
+
+  .nav-menu {
+    position: relative;
+  }
+
+  .nav-menu__toggle {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.35rem;
+    border: 1px solid var(--pico-muted-border-color);
+    background: var(--pico-card-background-color);
+  }
+
+  .nav-menu__toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-menu__icon,
+  .nav-menu__icon::before,
+  .nav-menu__icon::after {
+    display: block;
+    width: 1.1rem;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+
+  .nav-menu__icon {
+    position: relative;
+  }
+
+  .nav-menu__icon::before,
+  .nav-menu__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .nav-menu__icon::before {
+    top: -6px;
+  }
+
+  .nav-menu__icon::after {
+    top: 6px;
+  }
+
+  .nav-menu__dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 20;
+    min-width: 16rem;
+    max-width: min(20rem, calc(100vw - 3rem));
+    padding: 0.75rem;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: 0.5rem;
+    background: var(--pico-card-background-color);
+    box-shadow: var(--pico-card-box-shadow);
+  }
+
+  .nav-menu__dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-menu__dropdown li + li {
+    margin-top: 0.25rem;
+  }
+
+  .nav-menu__dropdown a {
+    display: block;
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.35rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .nav-menu__dropdown a:hover {
+    background: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+  }
+</style>
