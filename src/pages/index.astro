@@ -21,11 +21,46 @@ const settings = settingsData.story.content;
 
 <Layout title="Reviews" settings={settings}>
   <h1>Reviews</h1>
-  <ul>
-    {reviews.map((story) => (
-      <li>
-        <a href={`/${story.full_slug}`}>{story.name}</a>
-      </li>
-    ))}
+  <ul class="review-list">
+    {reviews.map((story) => {
+      const preview = story.content?.preview_image;
+      return (
+        <li>
+          <a href={`/${story.full_slug}`}>
+            {preview?.filename && (
+              <img
+                src={preview.filename}
+                alt={preview.alt || story.name}
+              />
+            )}
+            <span>{story.name}</span>
+          </a>
+        </li>
+      );
+    })}
   </ul>
 </Layout>
+
+<style>
+  .review-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .review-list a {
+    display: grid;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .review-list img {
+    width: 100%;
+    max-width: 28rem;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+
+const { blok, icon } = Astro.props;
+---
+
+<div {...storyblokEditable(blok)} class="pro-item">
+  {icon?.filename && (
+    <img
+      class="pro-item-icon"
+      src={icon.filename}
+      alt={icon.alt || ''}
+      width="24"
+      height="24"
+    />
+  )}
+  {blok.pro && <p>{blok.pro}</p>}
+</div>
+
+<style>
+  .pro-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .pro-item-icon {
+    flex: 0 0 auto;
+    display: block;
+  }
+
+  .pro-item p {
+    margin: 0;
+  }
+</style>

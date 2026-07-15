@@ -58,14 +58,14 @@ const toBarWidth = (value) => {
   <section class="supplement-item-pros">
     <h4>Pros</h4>
     {blok.pros?.map((item) => (
-      <StoryblokComponent blok={item} />
+      <StoryblokComponent blok={item} icon={blok.pro_asset} />
     ))}
   </section>
 
   <section class="supplement-item-cons">
     <h4>Cons</h4>
     {blok.cons?.map((item) => (
-      <StoryblokComponent blok={item} />
+      <StoryblokComponent blok={item} icon={blok.con_asset} />
     ))}
   </section>
 
