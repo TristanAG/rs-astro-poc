@@ -1,0 +1,74 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+
+const columns = [
+  { image: blok.image_one, text: blok.text_one },
+  { image: blok.image_two, text: blok.text_two },
+  { image: blok.image_three, text: blok.text_three },
+];
+---
+
+<section {...storyblokEditable(blok)} class="three-col-header">
+  {blok.title && <h2 class="three-col-header-title">{blok.title}</h2>}
+
+  <div class="three-col-header-grid">
+    {columns.map((column) => (
+      <div class="three-col-header-item">
+        {column.image?.filename && (
+          <img
+            class="three-col-header-image"
+            src={column.image.filename}
+            alt={column.image.alt || ''}
+          />
+        )}
+        {column.text && <p class="three-col-header-text">{column.text}</p>}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .three-col-header {
+    background-color: #7a93c2;
+    padding: 2rem;
+    border-radius: 0.5rem;
+  }
+
+  .three-col-header-title {
+    margin: 0 0 1.5rem;
+    text-align: center;
+  }
+
+  .three-col-header-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .three-col-header-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .three-col-header-image {
+    display: block;
+    width: 100%;
+    max-width: 12rem;
+    height: auto;
+  }
+
+  .three-col-header-text {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .three-col-header-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
