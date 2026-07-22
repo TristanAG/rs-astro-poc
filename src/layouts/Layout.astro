@@ -23,15 +23,15 @@ const navPages = data.stories;
   </head>
 
   <body>
-    <div class="container">
+    <div class="container container--header">
       <header class="site-header">
         <a href="/" class="site-logo">
           {logo?.filename && (
-            <img src={logo.filename} alt={logo.alt || settings.site_name} width="180" />
+            <img src={logo.filename} alt={logo.alt || settings.site_name} width="350" />
           )}
         </a>
 
-        <details class="nav-menu">
+        <!-- <details class="nav-menu">
           <summary class="nav-menu__toggle" aria-label="Open menu">
             <span class="nav-menu__icon" aria-hidden="true"></span>
           </summary>
@@ -45,9 +45,20 @@ const navPages = data.stories;
               ))}
             </ul>
           </nav>
-        </details>
+        </details> -->
       </header>
+    </div>
 
+    <nav class="site-nav">
+      <div class="container container--nav">
+        <a href="/">Latest Articles</a>
+      </div>
+      <div class="container container--nav">
+        <a href="/">Buying Guides</a>
+      </div>
+    </nav>
+
+    <div class="container container--content">
       <main>
         <slot />
       </main>
@@ -70,12 +81,39 @@ const navPages = data.stories;
 </html>
 
 <style>
+  .container--header {
+    padding-bottom: 1.5rem;
+  }
+
+  .container--content {
+    padding-top: 0;
+  }
+
+  .container--nav {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
   .site-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+  }
+
+  .site-nav {
+    width: 100%;
+    background-color: #444;
     margin-bottom: 2rem;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .site-nav a {
+    color: #fff;
+    text-decoration: none;
   }
 
   .site-logo {

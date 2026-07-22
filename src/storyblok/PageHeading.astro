@@ -6,5 +6,15 @@ const { blok } = Astro.props;
 
 <section {...storyblokEditable(blok)}>
   <h1>{blok.title}</h1>
-  <small>{blok.subtext}</small>
+  <p class="subtext">{blok.subtext}</p>
 </section>
+
+<style>
+  h1 {
+    text-align: center;
+  }
+  .subtext {
+    text-align: center;
+    font-size: 12px;
+  }
+</style>
