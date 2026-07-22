@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/vercel": "^11.0.3",
     "@picocss/pico": "^2.1.1",
     "@storyblok/astro": "^10.1.0",
     "@tailwindcss/vite": "^4.3.2",
