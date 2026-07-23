@@ -11,7 +11,7 @@
 .container {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 3rem 1.5rem;
+    padding: .5rem .5rem;
   }
 
 section {
@@ -30,4 +30,23 @@ section {
 .hero p {
     font-size: 1.2rem;
     color: var(--pico-muted-color);
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 36px;
+    color: #000;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 26px;
+    color: #000;
+    margin-bottom: 34px;
 }
