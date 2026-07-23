@@ -98,6 +98,29 @@ const navPages = data.stories;
     padding-left: 8.3%;
   }
 
+  /*
+    Below 999px: lock the left inset that 8.3% had at 999px (~82.9px),
+    then collapse it linearly to 0 by 767px so the container edge
+    moves flush with the content instead of keeping a proportional gap.
+  */
+  @media (max-width: 999px) {
+    .container--header,
+    .container--nav {
+      padding-left: max(0px, calc((100vw - 767px) * 82.917px / 232px));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .container--header {
+      border: 1px solid red;
+      padding-left: 0;
+    }
+
+    .container--nav {
+      padding-left: 0;
+    }
+  }
+
   .site-header {
     display: flex;
     /* align-items: center; */
