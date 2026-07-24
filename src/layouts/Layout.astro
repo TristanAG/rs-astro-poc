@@ -32,7 +32,7 @@ const navPages = data.stories;
         </a>
         <p class="header-text">{headerText}</p>
 
-        <!-- <details class="nav-menu">
+        <details class="nav-menu">
           <summary class="nav-menu__toggle" aria-label="Open menu">
             <span class="nav-menu__icon" aria-hidden="true"></span>
           </summary>
@@ -46,7 +46,7 @@ const navPages = data.stories;
               ))}
             </ul>
           </nav>
-        </details> -->
+        </details>
       </header>
     </div>
 
@@ -98,74 +98,10 @@ const navPages = data.stories;
     padding-left: 8.3%;
   }
 
-  /*
-    Below 999px: lock the left inset that 8.3% had at 999px (~82.9px),
-    then collapse it linearly to 0 by 767px so the container edge
-    moves flush with the content instead of keeping a proportional gap.
-  */
-  @media (max-width: 999px) {
-    .container--header,
-    .container--nav {
-      padding-left: max(0px, calc((100vw - 767px) * 82.917px / 232px));
-    }
-  }
-
-  @media (max-width: 767px) {
-    .container--header {
-      border: 1px solid red;
-      padding-left: 0;
-    }
-
-    .container--nav {
-      padding-left: 0;
-    }
-  }
-
-  .site-header {
-    display: flex;
-    /* align-items: center; */
-    flex-direction: column;
-    justify-content: space-between;
-    /* gap: 1rem; */
-  }
-
-  .header-text {
-    font-size: 12px;
-    line-height: 1.45;
-    font-weight: 400;
-    font-style: normal;
-    margin-bottom: 2px;
-    display: block;
-    color: #000;
-    text-align: left;
-  }
-
-  .site-nav {
-    width: 100%;
-    background-color: #444;
-    margin-bottom: 2rem;
-  }
-
-  .site-nav a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 14px;
-  }
-
-  .site-logo {
-    display: inline-flex;
-    line-height: 0;
-  }
-
-  .site-logo img {
-    display: block;
-    height: auto;
-  }
-
   .nav-menu {
+    display: none;
     position: relative;
+    margin-bottom: 0;
   }
 
   .nav-menu__toggle {
@@ -173,15 +109,35 @@ const navPages = data.stories;
     cursor: pointer;
     display: grid;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.35rem;
-    border: 1px solid var(--pico-muted-border-color);
-    background: var(--pico-card-background-color);
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #000;
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   .nav-menu__toggle::-webkit-details-marker {
     display: none;
+  }
+
+  .nav-menu__toggle::marker {
+    content: '';
+  }
+
+  .nav-menu__toggle::after,
+  .nav-menu[open] > .nav-menu__toggle::after {
+    display: none;
+    content: none;
+  }
+
+  .nav-menu[open] > .nav-menu__toggle {
+    margin-bottom: 0;
   }
 
   .nav-menu__icon,
@@ -248,5 +204,80 @@ const navPages = data.stories;
   .nav-menu__dropdown a:hover {
     background: var(--pico-primary-background);
     color: var(--pico-primary-inverse);
+  }
+
+  /*
+    Below 999px: lock the left inset that 8.3% had at 999px (~82.9px),
+    then collapse it linearly to 0 by 767px so the container edge
+    moves flush with the content instead of keeping a proportional gap.
+  */
+  @media (max-width: 999px) {
+    .container--header,
+    .container--nav {
+      padding-left: max(0px, calc((100vw - 767px) * 82.917px / 232px));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .container--header {
+      border: 1px solid red;
+      padding-left: 0;
+      padding-right: 3.5rem;
+    }
+
+    .container--nav {
+      display: none;
+    }
+
+    .nav-menu {
+      display: block;
+      position: fixed;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 30;
+    }
+  }
+
+  .site-header {
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    justify-content: space-between;
+    /* gap: 1rem; */
+  }
+
+  .header-text {
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 400;
+    font-style: normal;
+    margin-bottom: 2px;
+    display: block;
+    color: #000;
+    text-align: left;
+  }
+
+  .site-nav {
+    width: 100%;
+    background-color: #444;
+    margin-bottom: 2rem;
+  }
+
+  .site-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+  }
+
+  .site-logo {
+    display: inline-flex;
+    line-height: 0;
+  }
+
+  .site-logo img {
+    display: block;
+    height: auto;
   }
 </style>
