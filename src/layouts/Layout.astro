@@ -81,8 +81,49 @@ const headerText = settings?.header_text;
     </div>
 
     <script>
+      const menu = document.querySelector('.nav-menu');
+      const dropdown = menu?.querySelector('.nav-menu__dropdown');
+
+      function animateParentMenu(isOpen) {
+        if (!(menu instanceof HTMLDetailsElement) || !(dropdown instanceof HTMLElement)) return;
+
+        dropdown.style.transition = 'max-height 350ms ease';
+
+        if (isOpen) {
+          dropdown.style.maxHeight = '0';
+          requestAnimationFrame(() => {
+            dropdown.style.maxHeight = `${dropdown.scrollHeight}px`;
+          });
+          return;
+        }
+
+        dropdown.style.maxHeight = `${dropdown.scrollHeight}px`;
+        requestAnimationFrame(() => {
+          dropdown.style.maxHeight = '0';
+        });
+      }
+
+      function syncParentMenuHeight() {
+        if (!(menu instanceof HTMLDetailsElement) || !(dropdown instanceof HTMLElement) || !menu.open) {
+          return;
+        }
+
+        dropdown.style.maxHeight = `${dropdown.scrollHeight}px`;
+      }
+
+      if (menu instanceof HTMLDetailsElement && dropdown instanceof HTMLElement) {
+        dropdown.style.maxHeight = '0';
+
+        menu.addEventListener('toggle', () => {
+          animateParentMenu(menu.open);
+        });
+
+        menu.querySelectorAll('.nav-menu__section').forEach((section) => {
+          section.addEventListener('toggle', syncParentMenuHeight);
+        });
+      }
+
       document.addEventListener('click', (event) => {
-        const menu = document.querySelector('.nav-menu');
         if (!(menu instanceof HTMLDetailsElement) || !menu.open) return;
         if (event.target instanceof Node && !menu.contains(event.target)) {
           menu.open = false;
@@ -183,6 +224,7 @@ const headerText = settings?.header_text;
   }
 
   .nav-menu__dropdown {
+    display: block;
     background: #69c;
     position: absolute;
     top: 22px;
@@ -195,16 +237,13 @@ const headerText = settings?.header_text;
     transition: max-height 350ms ease;
   }
 
-  .nav-menu[open] .nav-menu__dropdown {
-    max-height: 100vh;
-  }
-
   .nav-menu__dropdown-inner {
     padding: 0;
   }
 
   .nav-menu__section {
     margin-bottom: 0;
+    border-bottom: 1px solid #fff;
   }
 
   .nav-menu__section-toggle {
@@ -212,11 +251,12 @@ const headerText = settings?.header_text;
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    justify-content: flex-start;
+    gap: 0;
     width: 100%;
+    box-sizing: border-box;
     margin: 0;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0 0.75rem 25px;
     border: 0;
     background: transparent;
     text-align: left;
@@ -257,9 +297,10 @@ const headerText = settings?.header_text;
     flex: 0 0 auto;
     width: 0;
     height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 9px solid currentColor;
+    margin-left: auto;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 12px solid currentColor;
     transition: transform 350ms ease;
   }
 
@@ -274,22 +315,38 @@ const headerText = settings?.header_text;
   }
 
   .nav-menu__section[open] .nav-menu__submenu-panel {
-    max-height: 12rem;
+    max-height: 16rem;
   }
 
   .nav-menu__submenu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
     margin: 0;
-    padding: 0 1rem 0.75rem;
+    padding: 0;
     list-style: none;
   }
 
-  .nav-menu__submenu li + li {
-    margin-top: 0.25rem;
+  .nav-menu__submenu li {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #fff;
+  }
+
+  .nav-menu__submenu li::before {
+    float: none;
+    content: none;
+    display: none;
   }
 
   .nav-menu__submenu a {
     display: block;
-    padding: 0.35rem 0;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.75rem 25px;
     text-decoration: none;
     font-family: 'Poppins', sans-serif;
     font-size: 16px;
@@ -311,7 +368,6 @@ const headerText = settings?.header_text;
 
   @media (max-width: 767px) {
     .container--header {
-      border: 1px solid red;
       padding-left: 0;
       padding-right: 3.5rem;
     }
