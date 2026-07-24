@@ -1,17 +1,9 @@
 ---
 import '../styles/global.css';
-import { useStoryblokApi } from '@storyblok/astro';
 
 const { title, settings } = Astro.props;
 const logo = settings?.logo;
 const headerText = settings?.header_text;
-const storyblokApi = useStoryblokApi();
-const { data } = await storyblokApi.get('cdn/stories', {
-  version: 'draft',
-  content_type: 'review_page',
-  per_page: 100,
-});
-const navPages = data.stories;
 ---
 
 <!doctype html>
@@ -36,15 +28,36 @@ const navPages = data.stories;
           <summary class="nav-menu__toggle" aria-label="Open menu">
             <span class="nav-menu__icon" aria-hidden="true"></span>
           </summary>
-          <nav class="nav-menu__dropdown">
-            <ul>
-              <li><a href="/">All Reviews</a></li>
-              {navPages.map((story) => (
-                <li>
-                  <a href={`/${story.full_slug}`}>{story.name}</a>
-                </li>
-              ))}
-            </ul>
+          <nav class="nav-menu__dropdown" aria-label="Mobile navigation">
+            <div class="nav-menu__dropdown-inner">
+              <details class="nav-menu__section">
+                <summary class="nav-menu__section-toggle">
+                  <span class="nav-menu__section-label">Buying Guides</span>
+                  <span class="nav-menu__section-arrow" aria-hidden="true"></span>
+                </summary>
+                <div class="nav-menu__submenu-panel">
+                  <ul class="nav-menu__submenu">
+                    <li><a href="#">Dummy Link 1</a></li>
+                    <li><a href="#">Dummy Link 2</a></li>
+                    <li><a href="#">Dummy Link 3</a></li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="nav-menu__section">
+                <summary class="nav-menu__section-toggle">
+                  <span class="nav-menu__section-label">Latest Articles</span>
+                  <span class="nav-menu__section-arrow" aria-hidden="true"></span>
+                </summary>
+                <div class="nav-menu__submenu-panel">
+                  <ul class="nav-menu__submenu">
+                    <li><a href="#">Dummy Link 1</a></li>
+                    <li><a href="#">Dummy Link 2</a></li>
+                    <li><a href="#">Dummy Link 3</a></li>
+                  </ul>
+                </div>
+              </details>
+            </div>
           </nav>
         </details>
       </header>
@@ -170,40 +183,118 @@ const navPages = data.stories;
   }
 
   .nav-menu__dropdown {
+    background: #69c;
     position: absolute;
-    top: calc(100% + 0.5rem);
-    right: 0;
-    z-index: 20;
-    min-width: 16rem;
-    max-width: min(20rem, calc(100vw - 3rem));
-    padding: 0.75rem;
-    border: 1px solid var(--pico-muted-border-color);
-    border-radius: 0.5rem;
-    background: var(--pico-card-background-color);
-    box-shadow: var(--pico-card-box-shadow);
+    top: 22px;
+    width: 100%;
+    left: 0;
+    z-index: 999;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 350ms ease;
   }
 
-  .nav-menu__dropdown ul {
-    margin: 0;
+  .nav-menu[open] .nav-menu__dropdown {
+    max-height: 100vh;
+  }
+
+  .nav-menu__dropdown-inner {
     padding: 0;
+  }
+
+  .nav-menu__section {
+    margin-bottom: 0;
+  }
+
+  .nav-menu__section-toggle {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .nav-menu__section-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-menu__section-toggle::marker {
+    content: '';
+  }
+
+  .nav-menu__section-toggle::after,
+  .nav-menu__section[open] > .nav-menu__section-toggle::after {
+    display: none;
+    content: none;
+  }
+
+  .nav-menu__section[open] > .nav-menu__section-toggle {
+    margin-bottom: 0;
+  }
+
+  .nav-menu__section-label {
+    flex: 1 1 auto;
+  }
+
+  .nav-menu__section-arrow {
+    flex: 0 0 auto;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 9px solid currentColor;
+    transition: transform 350ms ease;
+  }
+
+  .nav-menu__section[open] .nav-menu__section-arrow {
+    transform: rotate(180deg);
+  }
+
+  .nav-menu__submenu-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 350ms ease;
+  }
+
+  .nav-menu__section[open] .nav-menu__submenu-panel {
+    max-height: 12rem;
+  }
+
+  .nav-menu__submenu {
+    margin: 0;
+    padding: 0 1rem 0.75rem;
     list-style: none;
   }
 
-  .nav-menu__dropdown li + li {
+  .nav-menu__submenu li + li {
     margin-top: 0.25rem;
   }
 
-  .nav-menu__dropdown a {
+  .nav-menu__submenu a {
     display: block;
-    padding: 0.55rem 0.65rem;
-    border-radius: 0.35rem;
+    padding: 0.35rem 0;
     text-decoration: none;
-    color: inherit;
-  }
-
-  .nav-menu__dropdown a:hover {
-    background: var(--pico-primary-background);
-    color: var(--pico-primary-inverse);
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
   }
 
   /*
@@ -230,11 +321,16 @@ const navPages = data.stories;
     }
 
     .nav-menu {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       position: fixed;
-      top: 0.5rem;
-      right: 0.5rem;
-      z-index: 30;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 0.5rem 0.5rem 0;
+      z-index: 1000;
     }
   }
 
