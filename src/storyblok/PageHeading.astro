@@ -2,19 +2,139 @@
 import { storyblokEditable } from '@storyblok/astro';
 
 const { blok } = Astro.props;
+
+const hasAuthorSection =
+  blok.author_picture?.filename ||
+  blok.author_name ||
+  blok.author_title ||
+  blok.author_description;
 ---
 
-<section {...storyblokEditable(blok)}>
-  <h1>{blok.title}</h1>
-  <p class="subtext">{blok.subtext}</p>
+<section {...storyblokEditable(blok)} class="page-heading">
+  {blok.title && <h1>{blok.title}</h1>}
+
+  {hasAuthorSection && (
+    <div class="author-section">
+      <div class="author-left">
+        <div class="author-info">
+          {blok.author_picture?.filename && (
+            <img
+              class="author-picture"
+              src={blok.author_picture.filename}
+              alt={blok.author_picture.alt || blok.author_name || ''}
+              width="65"
+              height="71"
+            />
+          )}
+          <div class="author-meta">
+            {blok.author_name && <span class="author-name">{blok.author_name}</span>}
+            {blok.author_title && <span class="author-title">{blok.author_title}</span>}
+          </div>
+        </div>
+      </div>
+      {blok.author_description && (
+        <div class="author-right">
+          <p class="author-description">{blok.author_description}</p>
+        </div>
+      )}
+    </div>
+  )}
+
+  {blok.subtext && <p class="subtext">{blok.subtext}</p>}
 </section>
 
-<style>
-  h1 {
+<style is:global>
+  .page-heading h1 {
     text-align: center;
   }
-  .subtext {
+
+  .page-heading .author-section {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    max-width: 472px;
+    margin: 0 auto 15px;
+    border-top: 1.2px solid #acacac;
+    border-bottom: 1.2px solid #acacac;
+    padding: 12px 0;
+  }
+
+  .page-heading .author-left {
+    border-right: 2px solid #448ccb;
+    padding-right: 16px;
+  }
+
+  .page-heading .author-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .page-heading .author-picture {
+    display: block;
+    width: 65px;
+    height: 71px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .page-heading .author-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .page-heading .author-name {
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
+    color: #000;
+  }
+
+  .page-heading .author-title {
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 10px;
+    color: #000;
+  }
+
+  .page-heading .author-right {
+    padding-left: 16px;
+  }
+
+  .page-heading p.author-description {
+    margin: 0;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 17px;
+    color: #000;
+  }
+
+  .page-heading p.subtext {
     text-align: center;
     font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 767px) {
+    .page-heading h1 {
+      font-size: 24px;
+      line-height: 28px;
+    }
+
+    .page-heading p.subtext {
+      font-size: 11px;
+      max-width: 530px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-heading .author-section {
+      display: none;
+    }
   }
 </style>
