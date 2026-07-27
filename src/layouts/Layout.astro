@@ -31,21 +31,21 @@ const headerText = settings?.header_text;
           <nav class="nav-menu__dropdown" aria-label="Mobile navigation">
             <div class="nav-menu__dropdown-inner">
               <details class="nav-menu__section">
-                <summary class="nav-menu__section-toggle">
+                <summary class="nav-menu__section-toggle" role="button">
                   <span class="nav-menu__section-label">Buying Guides</span>
                   <span class="nav-menu__section-arrow" aria-hidden="true"></span>
                 </summary>
                 <div class="nav-menu__submenu-panel">
                   <ul class="nav-menu__submenu">
-                    <li><a href="#">Dummy Link 1</a></li>
-                    <li><a href="#">Dummy Link 2</a></li>
-                    <li><a href="#">Dummy Link 3</a></li>
+                    <li><a href="#">Top 5 Women's Hair Supplements of 2026</a></li>
+                    <li><a href="#">Top 5 Mens Hair Supplements of 2026</a></li>
+                    <li><a href="#">Top 5 Cortisol & Stress Supplements of 2026</a></li>
                   </ul>
                 </div>
               </details>
 
               <details class="nav-menu__section">
-                <summary class="nav-menu__section-toggle">
+                <summary class="nav-menu__section-toggle" role="button">
                   <span class="nav-menu__section-label">Latest Articles</span>
                   <span class="nav-menu__section-arrow" aria-hidden="true"></span>
                 </summary>
@@ -84,46 +84,104 @@ const headerText = settings?.header_text;
       const menu = document.querySelector('.nav-menu');
       const dropdown = menu?.querySelector('.nav-menu__dropdown');
       const dropdownInner = dropdown?.querySelector('.nav-menu__dropdown-inner');
+      const toggle = menu?.querySelector('.nav-menu__toggle');
 
-      function getDropdownContentHeight() {
-        if (!(dropdownInner instanceof HTMLElement)) return 0;
-        return dropdownInner.scrollHeight;
+      let isMenuAnimating = false;
+      let menuTransitionTimer = null;
+      let cachedMenuHeight = 0;
+      let skipToggleHandler = false;
+
+      const MENU_TRANSITION_MS = 350;
+
+      function measureDropdownHeight() {
+        if (!(dropdownInner instanceof HTMLElement)) return cachedMenuHeight;
+
+        const height = dropdownInner.getBoundingClientRect().height || dropdownInner.scrollHeight;
+        if (height > 0) cachedMenuHeight = height;
+        return height || cachedMenuHeight;
       }
 
-      function animateParentMenu(isOpen) {
+      function setDropdownHeight(height, animate) {
+        if (!(dropdown instanceof HTMLElement)) return;
+
+        dropdown.style.transition = animate ? `max-height ${MENU_TRANSITION_MS}ms ease` : 'none';
+        dropdown.style.maxHeight = `${height}px`;
+
+        if (!animate) {
+          dropdown.offsetHeight;
+        }
+      }
+
+      function beginMenuAnimation() {
+        isMenuAnimating = true;
+        clearTimeout(menuTransitionTimer);
+      }
+
+      function endMenuAnimation(callback) {
+        menuTransitionTimer = window.setTimeout(() => {
+          isMenuAnimating = false;
+          callback?.();
+        }, MENU_TRANSITION_MS);
+      }
+
+      function openMenu() {
         if (!(menu instanceof HTMLDetailsElement) || !(dropdown instanceof HTMLElement)) return;
 
-        dropdown.style.transition = 'max-height 350ms ease';
+        beginMenuAnimation();
+        const targetHeight = measureDropdownHeight();
+        setDropdownHeight(0, false);
+        setDropdownHeight(targetHeight, true);
+        endMenuAnimation();
+      }
 
-        if (isOpen) {
-          dropdown.style.maxHeight = '0';
-          requestAnimationFrame(() => {
-            dropdown.style.maxHeight = `${getDropdownContentHeight()}px`;
-          });
-          return;
-        }
+      function closeMenu(onComplete) {
+        if (!(dropdown instanceof HTMLElement)) return;
 
-        dropdown.style.maxHeight = `${getDropdownContentHeight()}px`;
-        requestAnimationFrame(() => {
-          dropdown.style.maxHeight = '0';
-        });
+        beginMenuAnimation();
+        const startHeight = measureDropdownHeight();
+        setDropdownHeight(startHeight, false);
+        setDropdownHeight(0, true);
+        endMenuAnimation(onComplete);
       }
 
       function syncParentMenuHeight() {
-        if (!(menu instanceof HTMLDetailsElement) || !(dropdown instanceof HTMLElement) || !menu.open) {
+        if (
+          isMenuAnimating ||
+          !(menu instanceof HTMLDetailsElement) ||
+          !(dropdown instanceof HTMLElement) ||
+          !menu.open
+        ) {
           return;
         }
 
-        requestAnimationFrame(() => {
-          dropdown.style.maxHeight = `${getDropdownContentHeight()}px`;
-        });
+        setDropdownHeight(measureDropdownHeight(), true);
       }
 
       if (menu instanceof HTMLDetailsElement && dropdown instanceof HTMLElement) {
-        dropdown.style.maxHeight = '0';
+        setDropdownHeight(0, false);
+
+        toggle?.addEventListener('click', (event) => {
+          if (!(menu instanceof HTMLDetailsElement) || isMenuAnimating) return;
+
+          if (menu.open) {
+            event.preventDefault();
+            closeMenu(() => {
+              skipToggleHandler = true;
+              menu.open = false;
+            });
+          }
+        });
 
         menu.addEventListener('toggle', () => {
-          animateParentMenu(menu.open);
+          if (skipToggleHandler) {
+            skipToggleHandler = false;
+            setDropdownHeight(0, false);
+            return;
+          }
+
+          if (menu.open) {
+            openMenu();
+          }
         });
 
         menu.querySelectorAll('.nav-menu__section').forEach((section) => {
@@ -138,9 +196,12 @@ const headerText = settings?.header_text;
       }
 
       document.addEventListener('click', (event) => {
-        if (!(menu instanceof HTMLDetailsElement) || !menu.open) return;
+        if (!(menu instanceof HTMLDetailsElement) || !menu.open || isMenuAnimating) return;
         if (event.target instanceof Node && !menu.contains(event.target)) {
-          menu.open = false;
+          closeMenu(() => {
+            skipToggleHandler = true;
+            menu.open = false;
+          });
         }
       });
     </script>
@@ -177,8 +238,8 @@ const headerText = settings?.header_text;
     cursor: pointer;
     display: grid;
     place-items: center;
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 1.35rem;
+    height: 1.35rem;
     margin: 0;
     padding: 0;
     border: none;
@@ -212,8 +273,8 @@ const headerText = settings?.header_text;
   .nav-menu__icon::before,
   .nav-menu__icon::after {
     display: block;
-    width: 1.1rem;
-    height: 2px;
+    width: 1.35rem;
+    height: 3px;
     background: currentColor;
     border-radius: 1px;
   }
@@ -230,11 +291,11 @@ const headerText = settings?.header_text;
   }
 
   .nav-menu__icon::before {
-    top: -6px;
+    top: -7px;
   }
 
   .nav-menu__icon::after {
-    top: 6px;
+    top: 7px;
   }
 
   .nav-menu__dropdown {
@@ -249,6 +310,13 @@ const headerText = settings?.header_text;
     max-height: 0;
     overflow: hidden;
     transition: max-height 350ms ease;
+    --pico-accordion-close-summary-color: #fff;
+    --pico-accordion-open-summary-color: #fff;
+    --pico-accordion-active-summary-color: #fff;
+    --pico-color: #fff;
+    --pico-muted-color: #fff;
+    --pico-primary: #fff;
+    --pico-primary-hover: #fff;
   }
 
   .nav-menu__dropdown-inner {
@@ -257,11 +325,7 @@ const headerText = settings?.header_text;
 
   .nav-menu__section {
     margin-bottom: 0;
-
-  }
-
-  .nav-menu__section[open] {
-    border-bottom: none;
+    border: none;
   }
 
   .nav-menu__section-toggle {
@@ -276,7 +340,10 @@ const headerText = settings?.header_text;
     margin: 0;
     padding: 0.75rem 0 0.75rem 15px;
     border: 0;
+    border-radius: 0;
     background: transparent;
+    box-shadow: none;
+    outline: none;
     text-align: left;
     font-family: 'Poppins', sans-serif;
     font-size: 24px;
@@ -285,6 +352,9 @@ const headerText = settings?.header_text;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: #fff;
+    --pico-box-shadow: none;
+    --pico-button-box-shadow: none;
+    --pico-button-hover-box-shadow: none;
     -webkit-appearance: none;
     appearance: none;
   }
@@ -307,12 +377,19 @@ const headerText = settings?.header_text;
     margin-bottom: 0;
   }
 
+  .nav-menu__section-toggle,
+  .nav-menu__section[open] > .nav-menu__section-toggle,
+  .nav-menu__section[open] > .nav-menu__section-toggle:not(:focus),
   .nav-menu__section-toggle:hover,
   .nav-menu__section-toggle:active,
   .nav-menu__section-toggle:focus,
   .nav-menu__section-toggle:focus-visible {
     color: #fff;
     background: transparent;
+    border: 0;
+    box-shadow: none;
+    outline: none;
+    --pico-box-shadow: none;
   }
 
   .nav-menu__section-label {
@@ -326,7 +403,7 @@ const headerText = settings?.header_text;
     margin-left: auto;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-top: 18px solid currentColor;
+    border-top: 18px solid #fff;
     transition: transform 350ms ease;
     margin-right: 6px;
   }
@@ -372,7 +449,13 @@ const headerText = settings?.header_text;
     display: none;
   }
 
-  .nav-menu__submenu a {
+  .nav-menu__submenu a,
+  .nav-menu__submenu a:hover,
+  .nav-menu__submenu a:active,
+  .nav-menu__submenu a:focus,
+  .nav-menu__submenu a:focus-visible,
+  .nav-menu__submenu a:visited,
+  .nav-menu__submenu a[aria-current]:not([aria-current=false]) {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -382,6 +465,7 @@ const headerText = settings?.header_text;
     font-size: 16px;
     font-weight: 600;
     color: #fff;
+    --pico-color: #fff;
   }
 
   /*
@@ -423,7 +507,7 @@ const headerText = settings?.header_text;
       left: 0;
       right: 0;
       width: 100%;
-      padding: 0.5rem 0.5rem 0;
+      padding: 0.5rem 0.7rem 0;
       z-index: 1000;
     }
   }
