@@ -1,9 +1,12 @@
 ---
 import '../styles/global.css';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 
 const { title, settings } = Astro.props;
 const logo = settings?.logo;
 const headerText = settings?.header_text;
+
+const buyingGuideNavLinks = settings?.buying_guide_links ?? [];
 ---
 
 <!doctype html>
@@ -37,9 +40,11 @@ const headerText = settings?.header_text;
                 </summary>
                 <div class="nav-menu__submenu-panel">
                   <ul class="nav-menu__submenu">
-                    <li><a href="#">Top 5 Women's Hair Supplements of 2026</a></li>
-                    <li><a href="#">Top 5 Mens Hair Supplements of 2026</a></li>
-                    <li><a href="#">Top 5 Cortisol & Stress Supplements of 2026</a></li>
+                    {buyingGuideNavLinks.map((item) => (
+                      <li>
+                        <StoryblokComponent blok={item} />
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </details>
@@ -449,13 +454,13 @@ const headerText = settings?.header_text;
     display: none;
   }
 
-  .nav-menu__submenu a,
-  .nav-menu__submenu a:hover,
-  .nav-menu__submenu a:active,
-  .nav-menu__submenu a:focus,
-  .nav-menu__submenu a:focus-visible,
-  .nav-menu__submenu a:visited,
-  .nav-menu__submenu a[aria-current]:not([aria-current=false]) {
+  .nav-menu__submenu :global(a),
+  .nav-menu__submenu :global(a:hover),
+  .nav-menu__submenu :global(a:active),
+  .nav-menu__submenu :global(a:focus),
+  .nav-menu__submenu :global(a:focus-visible),
+  .nav-menu__submenu :global(a:visited),
+  .nav-menu__submenu :global(a[aria-current]:not([aria-current=false])) {
     display: block;
     box-sizing: border-box;
     width: 100%;

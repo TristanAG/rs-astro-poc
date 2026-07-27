@@ -1,0 +1,25 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok, class: className = 'buying-guide-links' } = Astro.props;
+---
+
+<ul {...storyblokEditable(blok)} class={className}>
+  {(blok.buying_guide_links ?? blok.buying_guide_link ?? [])?.map((item) => (
+    <li>
+      <StoryblokComponent blok={item} />
+    </li>
+  ))}
+</ul>
+
+<style>
+  .buying-guide-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+</style>

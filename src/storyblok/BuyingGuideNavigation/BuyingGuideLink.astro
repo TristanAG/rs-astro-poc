@@ -1,0 +1,25 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+
+const resolveLinkHref = (link) => {
+  if (!link) return '#';
+  if (typeof link === 'string') return link;
+  if (link.linktype === 'email') return `mailto:${link.email ?? link.url ?? ''}`;
+  if (link.linktype === 'story') {
+    const slug = link.cached_url || link.url || '';
+    return slug.startsWith('/') ? slug : `/${slug}`;
+  }
+  return link.url || link.cached_url || '#';
+};
+
+const href = resolveLinkHref(blok.link_href);
+---
+
+<a
+  {...storyblokEditable(blok)}
+  href={href}
+>
+  {blok.link_text}
+</a>
