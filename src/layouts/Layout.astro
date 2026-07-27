@@ -7,6 +7,7 @@ const logo = settings?.logo;
 const headerText = settings?.header_text;
 
 const buyingGuideNavLinks = settings?.buying_guide_links ?? [];
+const latestArticlesNavLinks = settings?.latest_article_links ?? [];
 ---
 
 <!doctype html>
@@ -56,9 +57,11 @@ const buyingGuideNavLinks = settings?.buying_guide_links ?? [];
                 </summary>
                 <div class="nav-menu__submenu-panel">
                   <ul class="nav-menu__submenu">
-                    <li><a href="#">Dummy Link 1</a></li>
-                    <li><a href="#">Dummy Link 2</a></li>
-                    <li><a href="#">Dummy Link 3</a></li>
+                    {latestArticlesNavLinks.map((item) => (
+                      <li>
+                        <StoryblokComponent blok={item} />
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </details>
