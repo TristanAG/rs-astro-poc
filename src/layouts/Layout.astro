@@ -83,6 +83,12 @@ const headerText = settings?.header_text;
     <script>
       const menu = document.querySelector('.nav-menu');
       const dropdown = menu?.querySelector('.nav-menu__dropdown');
+      const dropdownInner = dropdown?.querySelector('.nav-menu__dropdown-inner');
+
+      function getDropdownContentHeight() {
+        if (!(dropdownInner instanceof HTMLElement)) return 0;
+        return dropdownInner.scrollHeight;
+      }
 
       function animateParentMenu(isOpen) {
         if (!(menu instanceof HTMLDetailsElement) || !(dropdown instanceof HTMLElement)) return;
@@ -92,12 +98,12 @@ const headerText = settings?.header_text;
         if (isOpen) {
           dropdown.style.maxHeight = '0';
           requestAnimationFrame(() => {
-            dropdown.style.maxHeight = `${dropdown.scrollHeight}px`;
+            dropdown.style.maxHeight = `${getDropdownContentHeight()}px`;
           });
           return;
         }
 
-        dropdown.style.maxHeight = `${dropdown.scrollHeight}px`;
+        dropdown.style.maxHeight = `${getDropdownContentHeight()}px`;
         requestAnimationFrame(() => {
           dropdown.style.maxHeight = '0';
         });
@@ -108,7 +114,9 @@ const headerText = settings?.header_text;
           return;
         }
 
-        dropdown.style.maxHeight = `${dropdown.scrollHeight}px`;
+        requestAnimationFrame(() => {
+          dropdown.style.maxHeight = `${getDropdownContentHeight()}px`;
+        });
       }
 
       if (menu instanceof HTMLDetailsElement && dropdown instanceof HTMLElement) {
@@ -121,6 +129,12 @@ const headerText = settings?.header_text;
         menu.querySelectorAll('.nav-menu__section').forEach((section) => {
           section.addEventListener('toggle', syncParentMenuHeight);
         });
+
+        if (dropdownInner instanceof HTMLElement) {
+          new ResizeObserver(() => {
+            syncParentMenuHeight();
+          }).observe(dropdownInner);
+        }
       }
 
       document.addEventListener('click', (event) => {
@@ -243,7 +257,11 @@ const headerText = settings?.header_text;
 
   .nav-menu__section {
     margin-bottom: 0;
-    border-bottom: 1px solid #fff;
+
+  }
+
+  .nav-menu__section[open] {
+    border-bottom: none;
   }
 
   .nav-menu__section-toggle {
@@ -256,7 +274,7 @@ const headerText = settings?.header_text;
     width: 100%;
     box-sizing: border-box;
     margin: 0;
-    padding: 0.75rem 0 0.75rem 25px;
+    padding: 0.75rem 0 0.75rem 15px;
     border: 0;
     background: transparent;
     text-align: left;
@@ -287,6 +305,14 @@ const headerText = settings?.header_text;
 
   .nav-menu__section[open] > .nav-menu__section-toggle {
     margin-bottom: 0;
+  }
+
+  .nav-menu__section-toggle:hover,
+  .nav-menu__section-toggle:active,
+  .nav-menu__section-toggle:focus,
+  .nav-menu__section-toggle:focus-visible {
+    color: #fff;
+    background: transparent;
   }
 
   .nav-menu__section-label {
@@ -333,8 +359,11 @@ const headerText = settings?.header_text;
     display: block;
     width: 100%;
     margin: 0;
-    padding: 0;
+
     border-bottom: 1px solid #fff;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 15px;
   }
 
   .nav-menu__submenu li::before {
