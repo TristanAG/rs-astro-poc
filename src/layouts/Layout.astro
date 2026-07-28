@@ -82,15 +82,13 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
       </div>
     </nav>
 
-    <div class="container container--content">
-      <main>
-        <slot />
-      </main>
+    <main>
+      <slot />
+    </main>
 
-      <footer>
-        <small>{settings.footer_text}</small>
-      </footer>
-    </div>
+    <footer class="container container--content">
+      <small>{settings.footer_text}</small>
+    </footer>
 
     <script>
       const menu = document.querySelector('.nav-menu');

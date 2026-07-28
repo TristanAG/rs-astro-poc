@@ -3,10 +3,47 @@ import { storyblokEditable } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 
 const { blok } = Astro.props;
+
+const FULL_WIDTH_COMPONENTS = new Set(['three_col_header']);
+
+function groupBodyBlocks(body = []) {
+  const groups = [];
+  let containerBlocks = [];
+
+  for (const block of body) {
+    if (FULL_WIDTH_COMPONENTS.has(block.component)) {
+      if (containerBlocks.length > 0) {
+        groups.push({ type: 'container', blocks: containerBlocks });
+        containerBlocks = [];
+      }
+      groups.push({ type: 'fullWidth', block });
+    } else {
+      containerBlocks.push(block);
+    }
+  }
+
+  if (containerBlocks.length > 0) {
+    groups.push({ type: 'container', blocks: containerBlocks });
+  }
+
+  return groups;
+}
+
+const groups = groupBodyBlocks(blok.body);
 ---
 
-<main {...storyblokEditable(blok)}>
-  {blok.body?.map((nestedBlok) => (
-    <StoryblokComponent blok={nestedBlok} />
-  ))}
-</main>
+<div {...storyblokEditable(blok)}>
+  {
+    groups.map((group) =>
+      group.type === 'fullWidth' ? (
+        <StoryblokComponent blok={group.block} />
+      ) : (
+        <div class="container container--content">
+          {group.blocks.map((nestedBlok) => (
+            <StoryblokComponent blok={nestedBlok} />
+          ))}
+        </div>
+      ),
+    )
+  }
+</div>
