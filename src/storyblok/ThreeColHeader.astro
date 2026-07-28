@@ -48,9 +48,9 @@ const columns = [
 
   .three-col-header-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
-    width: 650px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    width: min(100%, 650px);
     height: 140px;
     margin: 0 auto;
   }
@@ -59,14 +59,15 @@ const columns = [
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+
     text-align: center;
     gap: 0.5rem;
     background-color: #fff;
     padding: 0.5rem;
+    min-width: 0;
     min-height: 0;
     overflow: hidden;
-    width: 210px;
+    width: 100%;
     height: 140px;
     border-radius: 5px;
   }
@@ -85,14 +86,47 @@ const columns = [
     font-size: 0.875rem;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 767px) {
     .three-col-header-grid {
       width: 100%;
       height: auto;
-      grid-template-columns: 1fr;
+      padding: 0 10px;
+    }
+
+    .three-col-header-item {
+      height: auto;
+      aspect-ratio: 210 / 140;
+      padding: 0.35rem 0.25rem;
+      gap: 0.25rem;
     }
 
     .three-col-header-image {
+      flex: 1 1 0;
+      min-height: 0;
+      max-height: 55%;
+      max-width: 90%;
+    }
+
+    .three-col-header-text {
+      flex-shrink: 0;
+      font-size: 12px;
+      line-height: 18px;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  @media (max-width: 415px) {
+    .three-col-header-item {
+      aspect-ratio: auto;
+      height: auto;
+      overflow: visible;
+    }
+
+    .three-col-header-image {
+      flex: 0 0 auto;
+      width: 50px;
+      max-width: 50px;
+      height: auto;
       max-height: none;
     }
   }
