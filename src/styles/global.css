@@ -46,7 +46,7 @@ body {
 }
 
 .container--content p {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 section {
@@ -84,4 +84,9 @@ p {
     line-height: 26px;
     color: #000;
     margin-bottom: 34px;
+}
+
+a {
+    text-decoration:underline; 
+    color:#0927bd; 
 }
