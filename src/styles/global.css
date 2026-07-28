@@ -18,6 +18,37 @@ body {
     padding: .5rem .5rem;
   }
 
+.container--content {
+    padding-top: 0;
+    padding-bottom: 0.5rem;
+}
+
+.three-col-header + .container--content {
+    padding-top: 0;
+}
+
+.container--content > section + section {
+    margin-top: 0.75rem;
+}
+
+.container--content h2 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.container--content > section:first-child > h2:first-child {
+    margin-top: 0;
+}
+
+.container--content h3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.container--content p {
+    margin-bottom: 16px;
+}
+
 section {
     /* margin-bottom: 3rem; */
 }
