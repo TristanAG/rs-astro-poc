@@ -492,6 +492,7 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
 
   @media (max-width: 767px) {
     .container--header {
+      position: relative;
       padding-left: 0;
       padding-right: 3.5rem;
     }
@@ -506,19 +507,6 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
 
     .container--nav {
       display: none;
-    }
-
-    .nav-menu {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      padding: 0.5rem 0.7rem 0;
-      z-index: 1000;
     }
   }
 
@@ -565,5 +553,26 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
   .site-logo img {
     display: block;
     height: auto;
+  }
+
+  @media (max-width: 767px) {
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      position: absolute;
+      top: 0.5rem;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 0 0.7rem 0 0;
+      z-index: 1;
+    }
+
+    .nav-menu__dropdown {
+      top: 60px;
+      left: 0;
+      width: 100%;
+    }
   }
 </style>
