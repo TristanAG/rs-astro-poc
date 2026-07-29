@@ -1,3 +1,20 @@
+/**
+ * Parses raw HTML from a Storyblok Text/Textarea field.
+ *
+ * Usage in an Astro component:
+ *
+ *   import { renderHtmlField } from '../utils/renderHtmlField';
+ *
+ *   const { html, css } = renderHtmlField(blok.my_html_field);
+ *
+ *   {html && <div set:html={html} />}
+ *   {css && <style is:inline set:html={css}></style>}
+ *
+ * Use a Textarea field in Storyblok (not Rich Text). Do not use {blok.field}
+ * interpolation — that escapes HTML and shows tags as text.
+ *
+ * For drop-in HTML blocks, see src/storyblok/CustomHtml.astro.
+ */
 import { renderRichText } from '@storyblok/astro';
 
 function decodeHtmlEntities(value: string) {

@@ -1,13 +1,11 @@
 ---
 import { storyblokEditable, renderRichText } from '@storyblok/astro';
-import { renderHtmlField } from '../utils/renderHtmlField';
 
 const { blok } = Astro.props;
 
 const content_area_one = renderRichText(blok.content_area_one);
 const content_area_two = renderRichText(blok.content_area_two);
 const content_area_three = renderRichText(blok.content_area_three);
-const what_are_they_about_title = renderHtmlField(blok.what_are_they_about_title);
 ---
 
 <section {...storyblokEditable(blok)} class="page-content">
@@ -17,12 +15,7 @@ const what_are_they_about_title = renderHtmlField(blok.what_are_they_about_title
 
     <div set:html={content_area_two} />
 
-    {what_are_they_about_title.html && (
-        <div class="html-field" set:html={what_are_they_about_title.html} />
-    )}
-    <!-- {what_are_they_about_title.css && (
-        <style is:global set:html={what_are_they_about_title.css} />
-    )} -->
+    <h3>{blok.what_are_they_about_title}</h3>
     
     <div set:html={content_area_three} />
 </section>
@@ -34,21 +27,20 @@ const what_are_they_about_title = renderHtmlField(blok.what_are_they_about_title
     padding-right: 10px;
   }
 
-  h3,
-  .html-field :global(h3) {
+  h3 {
     font-size: 36px;
     color: #000;
-    text-align: center;
+    text-align: left;
     font-weight: 500;
     margin-bottom: 20px;
-    line-height: 1.1;
+    line-height: 42px;
   }
 
   @media (max-width: 767px) {
-    h3,
-    .html-field :global(h3) {
+    h3 {
         font-size: 24px;
         line-height: 28px;
+        text-align: center;
     }
 }
 </style>

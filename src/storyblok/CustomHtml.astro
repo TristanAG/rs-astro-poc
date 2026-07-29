@@ -18,7 +18,7 @@ const customCss = blok.custom_css?.trim() || css;
 )}
 
 {customCss && (
-  <style is:global set:html={customCss} />
+  <style is:inline set:html={customCss}></style>
 )}
 
 <style>
