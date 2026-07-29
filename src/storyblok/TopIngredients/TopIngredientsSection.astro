@@ -46,6 +46,7 @@ const items: SbBlokData[] = blok.items ?? [];
 
   .ingredient-timeline {
     --marker-size: 14px;
+    --timeline-offset-y: 30px;
     position: relative;
   }
 
@@ -87,7 +88,7 @@ const items: SbBlokData[] = blok.items ?? [];
 
   .ingredient-marker-link {
     position: absolute;
-    top: 6px;
+    top: calc(6px + var(--timeline-offset-y));
     left: -31px;
     z-index: 1;
     display: block;
