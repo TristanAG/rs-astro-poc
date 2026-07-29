@@ -1,0 +1,28 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+import { renderHtmlField } from '../utils/renderHtmlField';
+
+const { blok } = Astro.props;
+
+const wrapperClass = blok.css_class?.trim();
+const { html, css } = renderHtmlField(blok.html);
+const customCss = blok.custom_css?.trim() || css;
+---
+
+{html && (
+  <div
+    {...storyblokEditable(blok)}
+    class:list={['custom-html', wrapperClass]}
+    set:html={html}
+  />
+)}
+
+{customCss && (
+  <style is:global set:html={customCss} />
+)}
+
+<style>
+  .custom-html :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
