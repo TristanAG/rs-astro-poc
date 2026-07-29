@@ -25,6 +25,8 @@ const ratingBars = [
   ...categoryRatings,
 ];
 const grade = blok.overall_crade || '';
+const gradeCircleBackground =
+  'https://a.storyblok.com/f/293683996317857/165x165/1c304a7e88/prg-01_a_plus_100.webp';
 const productUrl =
   blok.product_link?.url ||
   blok.product_link?.cached_url ||
@@ -59,14 +61,15 @@ const toBarWidth = (value: unknown) => {
           <img
             src={product_image.filename}
             alt={product_image.alt || blok.title || ''}
-            width="108"
-            height="206"
           />
         )}
       </div>
 
       <div class="supplement-item-grade">
-        <div class="grade-circle">
+        <div
+          class="grade-circle"
+          style={`background-image: url('${gradeCircleBackground}');`}
+        >
           <span class="grade-value">{grade}</span>
           <span class="grade-label">Overall Grade</span>
         </div>
@@ -132,7 +135,7 @@ const toBarWidth = (value: unknown) => {
 
   .supplement-item-card {
     display: grid;
-    grid-template-columns: 220px 550px 1fr;
+    grid-template-columns: 220px 530px 1fr;
     overflow: hidden;
     color: inherit;
     border: 2px solid #eaeaea;
@@ -155,14 +158,13 @@ const toBarWidth = (value: unknown) => {
     align-items: center;
     justify-content: center;
     min-width: 0;
-    padding: 24px;
+    padding: 8px 4px;
   }
 
   .supplement-item-image img {
     display: block;
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    object-fit: contain;
   }
 
   .supplement-item-ratings {
@@ -254,38 +256,23 @@ const toBarWidth = (value: unknown) => {
   }
 
   .grade-circle {
-    position: relative;
     display: flex;
-    width: 165px;
-    height: 165px;
+    width: 185px;
+    height: 185px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    border: 14px solid #921414;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow:
-      inset 0 0 0 3px #fff,
-      0 0 0 3px #e0e0e0;
+    margin: 20px auto 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
     font-family: Arial, sans-serif;
-  }
-
-  .grade-circle::after {
-    position: absolute;
-    right: 8px;
-    bottom: 9px;
-    width: 13px;
-    height: 13px;
-    border: 3px solid #fff;
-    border-radius: 50%;
-    background: #921414;
-    content: '';
+    text-align: center;
   }
 
   .grade-value {
     color: #000;
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 700;
     line-height: 1;
   }
@@ -320,11 +307,11 @@ const toBarWidth = (value: unknown) => {
 
   @media (max-width: 1000px) {
     .supplement-item-card {
-      grid-template-columns: 20% 50% 30%;
+      grid-template-columns: 20% 48% 32%;
     }
 
     .supplement-item-image {
-      padding: 20px 10px;
+      padding: 8px 4px;
     }
 
     .rating-label {
@@ -402,24 +389,15 @@ const toBarWidth = (value: unknown) => {
     }
 
     .grade-circle {
-      width: 100px;
-      height: 100px;
-      border-width: 9px;
-      box-shadow:
-        inset 0 0 0 2px #fff,
-        0 0 0 2px #e0e0e0;
-    }
-
-    .grade-circle::after {
-      right: 4px;
-      bottom: 5px;
-      width: 8px;
-      height: 8px;
-      border-width: 2px;
+      width: 135px;
+      height: 135px;
+      margin-top: 10px;
+      background-size: 100%;
     }
 
     .grade-value {
-      font-size: 36px;
+      padding-top: 28px;
+      font-size: 40px;
       letter-spacing: -0.75px;
       line-height: 38px;
     }
