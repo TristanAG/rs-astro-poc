@@ -22,7 +22,31 @@ const { blok } = Astro.props;
 </section>
 
 <style>
+    .avoid-section {
+
+    }
+
     .red {
         color: #ff0000;
+    }
+
+    h2 {
+        position: relative;
+        padding-top: 15px;
+        margin: 0 auto 25px;;
+        width: 450px;
+        max-width: 100%;
+        font-weight: 500;
+    }
+
+    h2::before {
+        content: "";
+        position: absolute;
+        width: 46px;
+        height: 3px;
+        background: #000;
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 </style>
