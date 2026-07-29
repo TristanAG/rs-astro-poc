@@ -18,12 +18,10 @@ const content = renderRichText(blok.content);
 
 <style>
   .accordion-trigger {
+    position: relative;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 0;
+    display: block;
+    padding: 1rem 2.75rem 1rem 0;
     margin: 0;
     background: transparent;
     border: 0;
@@ -31,24 +29,68 @@ const content = renderRichText(blok.content);
     text-align: left;
     cursor: pointer;
     font: inherit;
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 26px;
+    color: #000;
+    box-shadow: none;
+    outline: none;
+    --pico-box-shadow: none;
+    --pico-button-box-shadow: none;
+    --pico-button-hover-box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .accordion-trigger:hover,
+  .accordion-trigger:active,
+  .accordion-trigger:focus,
+  .accordion-trigger:focus-visible {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    outline: none;
+    color: #000;
+    --pico-box-shadow: none;
   }
 
   .accordion-title {
-    flex: 1 1 auto;
+    display: block;
+    padding-right: 0.5rem;
   }
 
   .accordion-arrow {
-    flex: 0 0 auto;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-right: 2px solid #8ed1fc;
-    border-bottom: 2px solid #8ed1fc;
-    transform: rotate(45deg);
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 3px solid #29b6dc;
+    background: transparent;
+    color: #29b6dc;
+    box-sizing: border-box;
+  }
+
+  .accordion-arrow::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    margin-top: 2px;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid currentColor;
     transition: transform 200ms ease;
   }
 
-  .accordion-item.is-open .accordion-arrow {
-    transform: rotate(-135deg);
+  .accordion-item.is-open .accordion-arrow::before {
+    transform: rotate(180deg);
   }
 
   .accordion-panel {

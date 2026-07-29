@@ -6,7 +6,7 @@ const { blok } = Astro.props;
 ---
 
 <section {...storyblokEditable(blok)} class="accordion-section">
-  {blok.heading && <h2>{blok.heading}</h2>}
+  {blok.heading && <h3>{blok.heading}</h3>}
 
   <div class="accordion" data-accordion>
     {blok.items?.map((item) => (
@@ -14,6 +14,12 @@ const { blok } = Astro.props;
     ))}
   </div>
 </section>
+
+<style>
+  h3 {
+    text-align: center;
+  }
+</style>
 
 <script>
   document.addEventListener('click', (event) => {
