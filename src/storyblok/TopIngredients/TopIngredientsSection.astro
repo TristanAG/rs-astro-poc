@@ -78,7 +78,7 @@ const items: SbBlokData[] = blok.items ?? [];
 
   .ingredient-list li {
     position: relative;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1rem;
     padding: 0;
   }
 
@@ -125,6 +125,7 @@ const items: SbBlokData[] = blok.items ?? [];
   const timelineSelector = '[data-ingredient-timeline]';
   const scrollSpyOffset = 400;
   const anchorOffset = 55;
+  const trackEndPadding = 8;
   let animationFrame = 0;
 
   function updateTimelines() {
@@ -145,7 +146,9 @@ const items: SbBlokData[] = blok.items ?? [];
         return rect.top - timelineTop + rect.height / 2;
       });
       const trackTop = markerCenters[0];
-      const trackHeight = Math.max(0, markerCenters.at(-1)! - trackTop);
+      const lastArticle = articles.at(-1)!;
+      const lastArticleBottom = lastArticle.getBoundingClientRect().bottom - timelineTop + trackEndPadding;
+      const trackHeight = Math.max(0, lastArticleBottom - trackTop);
       const firstMarkerTop = links[0].getBoundingClientRect().top;
       const fillHeight = Math.min(trackHeight, Math.max(0, scrollSpyOffset - firstMarkerTop));
 

@@ -5,6 +5,7 @@ const { blok, timelineId = `top-ingredient-${blok._uid}` } = Astro.props;
 const copy = renderRichText(blok.copy);
 const editors_note = renderRichText(blok.editors_note);
 const editors_note_highlighted_text_color = blok.editors_note_highlighted_text_color;
+const hasEditorsNote = Boolean(blok.editors_note_highlighted_text || blok.editors_note);
 ---
 
 <article
@@ -13,31 +14,49 @@ const editors_note_highlighted_text_color = blok.editors_note_highlighted_text_c
   class="ingredient-item"
   data-ingredient-article
 >
-  <p class="ingredient-item-text">
-    {blok.title && <strong class="ingredient-title">{blok.title} </strong>}
-    {blok.copy && <span class="ingredient-copy" set:html={copy} />}
-    {blok.editors_note_highlighted_text && (
-      <span class="editors-note" style={`background-color: ${editors_note_highlighted_text_color};`}>{blok.editors_note_highlighted_text}</span>
+  <div class="ingredient-item-text">
+    {blok.title && <strong class="ingredient-title">{blok.title}</strong>}
+    {blok.copy && <div class="ingredient-copy" set:html={copy} />}
+    {hasEditorsNote && (
+      <div
+        class:list={[
+          'editors-note-section',
+          { 'editors-note-section--spaced': blok.copy },
+        ]}
+      >
+        <div class="editors-note-lead">
+          {blok.editors_note_highlighted_text && (
+            <span class="editors-note" style={`background-color: ${editors_note_highlighted_text_color};`}>{blok.editors_note_highlighted_text}</span>
+          )}
+          {blok.editors_note && <div class="editors-note-text" set:html={editors_note} />}
+        </div>
+      </div>
     )}
-    &nbsp;
-    {blok.editors_note && <span class="editors-note-text" set:html={editors_note} />}
-  </p>
+  </div>
 </article>
 
 <style>
   .ingredient-item {
     margin: 0;
+    padding: 0;
     box-shadow: none;
   }
 
   .ingredient-item-text {
     margin: 0;
+    padding: 0;
+    font-family: 'poppins', sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 26px;
+    color: #000;
   }
 
   .ingredient-title {
+    display: block;
     font-family: 'poppins', sans-serif;
     font-weight: 400;
-    margin: 0;
+    margin: 0 0 0.5rem;
     font-size: 26px;
     line-height: 26px;
     text-align: left;
@@ -45,11 +64,56 @@ const editors_note_highlighted_text_color = blok.editors_note_highlighted_text_c
 
   .ingredient-copy :global(p),
   .editors-note-text :global(p) {
+    margin: 0;
+    display: block;
+  }
+
+  .ingredient-copy :global(p + p),
+  .editors-note-text :global(p + p) {
+    margin-top: 26px;
+  }
+
+  .ingredient-copy :global(p:empty),
+  .editors-note-text :global(p:empty) {
+    display: none;
+  }
+
+  .editors-note-section {
+    display: block;
+  }
+
+  .editors-note-section--spaced {
+    margin-top: 26px;
+  }
+
+  .ingredient-title + .editors-note-section {
+    margin-top: 0.5rem;
+  }
+
+  .editors-note-lead {
+    display: block;
+  }
+
+  .editors-note-text {
+    display: contents;
+  }
+
+  .editors-note-lead :global(p:first-child) {
     display: inline;
     margin: 0;
   }
+
+  .editors-note-lead :global(p + p) {
+    display: block;
+    margin-top: 26px;
+  }
+
   .editors-note {
     font-style: italic;
     font-weight: 700;
+  }
+
+  .editors-note:not(:last-child)::after {
+    content: ' ';
   }
 </style>
