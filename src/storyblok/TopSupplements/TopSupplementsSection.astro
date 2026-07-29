@@ -18,8 +18,8 @@ const top_5_image = blok.top_5_image;
   {blok.copy && <div set:html={copy}></div>}
 
   <div>
-    {blok.supplement_items?.map((item) => (
-      <StoryblokComponent blok={item} />
+    {blok.supplement_items?.map((item: any, index: number) => (
+      <StoryblokComponent blok={item} rank={index + 1} />
     ))}
   </div>
 </section>

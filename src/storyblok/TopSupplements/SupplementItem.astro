@@ -2,11 +2,11 @@
 import { storyblokEditable, renderRichText } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 
-const { blok } = Astro.props;
+const { blok, rank = 1 } = Astro.props;
 const product_image = blok.product_image;
 const why_we_chose_it = renderRichText(blok.why_we_chose_it);
 
-const ratingBars = [
+const categoryRatings = [
   { label: 'Predicted Effectiveness', value: blok.predicted_effectiveness },
   { label: 'Ingredient Quality', value: blok.ingredient_quality },
   { label: 'Value', value: blok.value },
@@ -14,7 +14,30 @@ const ratingBars = [
   { label: 'User Rating', value: blok.user_rating },
 ];
 
-const toBarWidth = (value) => {
+const validRatings = categoryRatings
+  .map(({ value }) => Number(value))
+  .filter((value) => Number.isFinite(value));
+const overallRating = validRatings.length
+  ? validRatings.reduce((total, value) => total + value, 0) / validRatings.length
+  : 0;
+const ratingBars = [
+  { label: 'OVERALL RATING', value: overallRating },
+  ...categoryRatings,
+];
+const grade = blok.overall_crade || '';
+const productUrl =
+  blok.product_link?.url ||
+  blok.product_link?.cached_url ||
+  blok.affiliate_url ||
+  '';
+const CardTag = rank === 1 && productUrl ? 'a' : 'div';
+
+const formatRating = (value: unknown) => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toFixed(1) : '0.0';
+};
+
+const toBarWidth = (value: unknown) => {
   const numeric = Number(value);
   if (Number.isNaN(numeric)) return 0;
   return `${Math.min(Math.max(numeric, 0), 10) * 10}%`;
@@ -22,118 +45,263 @@ const toBarWidth = (value) => {
 ---
 
 <article {...storyblokEditable(blok)} class="supplement-item">
-  {blok.title && <h3 class="supplement-item-title">{blok.title}</h3>}
+  <CardTag
+    class:list={['supplement-item-card', { 'supplement-item-link': CardTag === 'a' }]}
+    href={CardTag === 'a' ? productUrl : undefined}
+  >
+    {blok.title && (
+      <h3 class="supplement-item-mobile-title">#{rank} {blok.title}</h3>
+    )}
 
-  <div class="supplement-item-top">
-    <div class="supplement-item-image">
-      {product_image?.filename && (
-        <img
-          src={product_image.filename}
-          alt={product_image.alt || blok.title || ''}
-        />
-      )}
-    </div>
+    <div class="supplement-item-product-grade">
+      <div class="supplement-item-image">
+        {product_image?.filename && (
+          <img
+            src={product_image.filename}
+            alt={product_image.alt || blok.title || ''}
+            width="108"
+            height="206"
+          />
+        )}
+      </div>
 
-    <div class="supplement-item-bars">
-      {ratingBars.map((bar) => (
-        <div class="rating-bar">
-          <div class="rating-bar-label">
-            <span>{bar.label}</span>
-            <span>{bar.value ?? 0}/10</span>
-          </div>
-          <div class="rating-bar-track" aria-hidden="true">
-            <div class="rating-bar-fill" style={`width: ${toBarWidth(bar.value)};`} />
-          </div>
+      <div class="supplement-item-grade">
+        <div class="grade-circle">
+          <span class="grade-value">{grade}</span>
+          <span class="grade-label">Overall Grade</span>
         </div>
-      ))}
+      </div>
     </div>
 
-    <div class="supplement-item-grade">
-      {blok.overall_crade && (
-        <p class="overall-grade">{blok.overall_crade}</p>
+    <div class="supplement-item-ratings">
+      {blok.title && (
+        <h3 class="supplement-item-desktop-title">#{rank}. {blok.title}</h3>
       )}
+      <ul>
+        {ratingBars.map((bar, index) => (
+          <li class:list={{ 'active-rating': index === 0 }}>
+            <div class="rating-summary">
+              <span class="rating-label">{bar.label}</span>
+              <span class="rating-track">
+                <span
+                  class="rating-fill"
+                  style={`width: ${toBarWidth(bar.value)};`}
+                >
+                  {formatRating(bar.value)}/10
+                </span>
+              </span>
+            </div>
+            <div class="mobile-rating-track" aria-hidden="true">
+              <span
+                class="mobile-rating-fill"
+                style={`width: ${toBarWidth(bar.value)};`}
+              ></span>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
+  </CardTag>
+
+  <div class="supplement-item-details">
+    <section class="supplement-item-pros">
+      <h4>Pros</h4>
+      {blok.pros?.map((item: any) => (
+        <StoryblokComponent blok={item} icon={blok.pro_asset} />
+      ))}
+    </section>
+
+    <section class="supplement-item-cons">
+      <h4>Cons</h4>
+      {blok.cons?.map((item: any) => (
+        <StoryblokComponent blok={item} icon={blok.con_asset} />
+      ))}
+    </section>
+
+    {blok.why_we_chose_it && (
+      <div class="supplement-item-why" set:html={why_we_chose_it} />
+    )}
   </div>
-
-  <section class="supplement-item-pros">
-    <h4>Pros</h4>
-    {blok.pros?.map((item) => (
-      <StoryblokComponent blok={item} icon={blok.pro_asset} />
-    ))}
-  </section>
-
-  <section class="supplement-item-cons">
-    <h4>Cons</h4>
-    {blok.cons?.map((item) => (
-      <StoryblokComponent blok={item} icon={blok.con_asset} />
-    ))}
-  </section>
-
-  {blok.why_we_chose_it && (
-    <div class="supplement-item-why" set:html={why_we_chose_it} />
-  )}
 </article>
 
 <style>
   .supplement-item {
-    margin-bottom: 2.5rem;
+    max-width: 987px;
+    margin: 20px auto 40px;
   }
 
-  .supplement-item-title {
-    margin-bottom: 1rem;
-  }
-
-  .supplement-item-top {
+  .supplement-item-card {
     display: grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
-    gap: 1.5rem;
-    align-items: start;
+    grid-template-columns: 220px 550px 1fr;
+    overflow: hidden;
+    color: inherit;
+    border: 2px solid #eaeaea;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+
+  .supplement-item-link {
+    cursor: pointer;
+  }
+
+  .supplement-item-product-grade {
+    display: contents;
+  }
+
+  .supplement-item-image {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 24px;
   }
 
   .supplement-item-image img {
     display: block;
-    width: 100%;
+    max-width: 100%;
     height: auto;
+    object-fit: contain;
   }
 
-  .supplement-item-bars {
+  .supplement-item-ratings {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    border-right: 2px solid #eaeaea;
+    border-left: 2px solid #eaeaea;
+  }
+
+  .supplement-item-desktop-title {
+    display: block;
+    margin: 0;
+    padding: 15px 8px 7px;
+    color: #000;
+    background: #f8f8f8;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .supplement-item-ratings ul {
+    margin: 0;
+    padding: 5px;
+    list-style: none;
+  }
+
+  .supplement-item-ratings li {
+    margin: 0;
+    padding: 5px;
+    border-bottom: 1px solid #a1a1a1;
+  }
+
+  .supplement-item-ratings li:last-child {
+    border-bottom: 0;
+  }
+
+  .supplement-item-ratings li.active-rating {
+    padding: 2px;
+    border: 3px solid #921414;
+  }
+
+  .rating-summary {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    align-items: stretch;
   }
 
-  .rating-bar-label {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.35rem;
-    font-size: 0.9rem;
+  .rating-label {
+    width: 49%;
+    color: #000;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 25px;
   }
 
-  .rating-bar-track {
-    width: 100%;
-    height: 0.5rem;
-    background: color-mix(in srgb, currentColor 15%, transparent);
+  .rating-track {
+    width: 51%;
     overflow: hidden;
+    background: #e0e0e0;
   }
 
-  .rating-bar-fill {
+  .rating-fill {
+    display: block;
+    min-width: max-content;
+    box-sizing: border-box;
     height: 100%;
-    background: currentColor;
+    padding-left: 5px;
+    color: #fff;
+    background: #921414;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 25px;
+  }
+
+  .mobile-rating-track {
+    display: none;
   }
 
   .supplement-item-grade {
+    grid-column: 3;
+    grid-row: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 0;
+    padding: 20px 12px;
     text-align: center;
   }
 
-  .overall-grade {
-    margin: 0;
-    font-size: 2.5rem;
+  .grade-circle {
+    position: relative;
+    display: flex;
+    width: 165px;
+    height: 165px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 14px solid #921414;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      inset 0 0 0 3px #fff,
+      0 0 0 3px #e0e0e0;
+    font-family: Arial, sans-serif;
+  }
+
+  .grade-circle::after {
+    position: absolute;
+    right: 8px;
+    bottom: 9px;
+    width: 13px;
+    height: 13px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: #921414;
+    content: '';
+  }
+
+  .grade-value {
+    color: #000;
+    font-size: 48px;
     font-weight: 700;
     line-height: 1;
+  }
+
+  .grade-label {
+    color: #000;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .supplement-item-mobile-title {
+    display: none;
+  }
+
+  .supplement-item-details {
+    margin-top: 24px;
   }
 
   .supplement-item-pros,
@@ -150,9 +318,181 @@ const toBarWidth = (value) => {
     margin-top: 1.5rem;
   }
 
-  @media (max-width: 768px) {
-    .supplement-item-top {
-      grid-template-columns: 1fr;
+  @media (max-width: 1000px) {
+    .supplement-item-card {
+      grid-template-columns: 20% 50% 30%;
+    }
+
+    .supplement-item-image {
+      padding: 20px 10px;
+    }
+
+    .rating-label {
+      width: 60%;
+      font-size: 16px;
+    }
+
+    .rating-track {
+      width: 40%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .supplement-item {
+      margin-bottom: 10px;
+    }
+
+    .supplement-item-card {
+      display: flex;
+      overflow: visible;
+      flex-direction: column;
+      border: 0;
+    }
+
+    .supplement-item-mobile-title {
+      position: relative;
+      display: block;
+      margin: 0 0 10px;
+      padding-top: 25px;
+      color: #000;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+      line-height: 22px;
+      text-align: center;
+    }
+
+    .supplement-item-mobile-title::before {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      display: block;
+      width: 48px;
+      height: 3px;
+      transform: translateX(-50%);
+      background: #000;
+      content: '';
+    }
+
+    .supplement-item-product-grade {
+      display: flex;
+      align-items: stretch;
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+    }
+
+    .supplement-item-image,
+    .supplement-item-grade {
+      width: 50%;
+      box-sizing: border-box;
+    }
+
+    .supplement-item-image {
+      padding: 12px;
+      border-right: 1px solid #ccc;
+    }
+
+    .supplement-item-image img {
+      max-width: 85px;
+      max-height: 180px;
+    }
+
+    .supplement-item-grade {
+      padding: 15px 8px;
+    }
+
+    .grade-circle {
+      width: 100px;
+      height: 100px;
+      border-width: 9px;
+      box-shadow:
+        inset 0 0 0 2px #fff,
+        0 0 0 2px #e0e0e0;
+    }
+
+    .grade-circle::after {
+      right: 4px;
+      bottom: 5px;
+      width: 8px;
+      height: 8px;
+      border-width: 2px;
+    }
+
+    .grade-value {
+      font-size: 36px;
+      letter-spacing: -0.75px;
+      line-height: 38px;
+    }
+
+    .grade-label {
+      font-size: 8px;
+      letter-spacing: -0.5px;
+      line-height: 10px;
+    }
+
+    .supplement-item-ratings {
+      width: 100%;
+      border: 0;
+    }
+
+    .supplement-item-desktop-title {
+      display: none;
+    }
+
+    .supplement-item-ratings ul {
+      padding: 0;
+    }
+
+    .supplement-item-ratings li {
+      padding: 5px 0;
+    }
+
+    .supplement-item-ratings li.active-rating {
+      padding: 5px;
+      border-width: 2px;
+    }
+
+    .rating-label {
+      width: 75%;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .active-rating .rating-label {
+      font-weight: 600;
+    }
+
+    .rating-track {
+      width: 25%;
+      background: transparent;
+    }
+
+    .rating-fill {
+      width: 100% !important;
+      padding: 0;
+      color: #000;
+      background: transparent;
+      text-align: right;
+    }
+
+    .mobile-rating-track {
+      display: block;
+      width: 100%;
+      height: 12px;
+      overflow: hidden;
+      background: #ccc;
+    }
+
+    .mobile-rating-fill {
+      display: block;
+      height: 100%;
+      background: #990000;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .supplement-item-mobile-title {
+      font-size: 18px;
     }
   }
 </style>
