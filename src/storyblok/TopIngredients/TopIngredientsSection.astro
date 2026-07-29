@@ -1,20 +1,36 @@
 ---
-import { storyblokEditable, renderRichText } from '@storyblok/astro';
+import { storyblokEditable, renderRichText, type SbBlokData } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 
 const { blok } = Astro.props;
 const copy = renderRichText(blok.copy);
+const timelineId = `top-ingredients-${blok._uid}`;
+const items: SbBlokData[] = blok.items ?? [];
 ---
 
-<section {...storyblokEditable(blok)} class="avoid-section">
+<section {...storyblokEditable(blok)} class="top-ingredients-section" data-ingredient-timeline>
   {blok.title && <h2>{blok.title}</h2>}
   {blok.copy && <p set:html={copy}></p>}
 
-  <div>
-    {blok.items?.map((item) => (
-      <StoryblokComponent blok={item} />
-    ))}
-  </div>
+  <nav class="ingredient-timeline" aria-label="Top ingredients">
+    <div class="progress-bar" aria-hidden="true"></div>
+    <div class="progress-bar--increment" aria-hidden="true"></div>
+
+    <ol class="ingredient-list">
+      {items.map((item, index) => {
+        const articleId = `${timelineId}-item-${index + 1}`;
+
+        return (
+          <li>
+            <a class="ingredient-marker-link" href={`#${articleId}`} aria-label={`Go to ingredient ${index + 1}`}>
+              <span class="progress-bar--circle"></span>
+            </a>
+            <StoryblokComponent blok={item} timelineId={articleId} />
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
 </section>
 
 <style>
@@ -27,4 +43,158 @@ const copy = renderRichText(blok.copy);
     text-align: center;
     margin-bottom: 23px;
   }
+
+  .ingredient-timeline {
+    --marker-size: 14px;
+    position: relative;
+  }
+
+  .progress-bar,
+  .progress-bar--increment {
+    position: absolute;
+    top: 7px;
+    left: calc(var(--marker-size) / 2 - 1px);
+    width: 2px;
+    height: calc(100% - 14px);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+
+  .progress-bar {
+    background-color: #e4e7eb;
+  }
+
+  .progress-bar--increment {
+    height: 0;
+    background-color: #1d304c;
+  }
+
+  .ingredient-list {
+    margin: 0;
+    padding: 0 0 0 40px;
+    list-style: none;
+  }
+
+  .ingredient-list li {
+    position: relative;
+    margin: 0 0 1.5rem;
+    padding: 0;
+  }
+
+  .ingredient-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .ingredient-marker-link {
+    position: absolute;
+    top: 6px;
+    left: -31px;
+    z-index: 1;
+    display: block;
+    width: var(--marker-size);
+    height: var(--marker-size);
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 50%;
+    text-decoration: none;
+  }
+
+  .progress-bar--circle {
+    display: block;
+    width: var(--marker-size);
+    height: var(--marker-size);
+    box-sizing: border-box;
+    border: 2px solid #1d304c;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: background-color 100ms ease;
+  }
+
+  .ingredient-marker-link.active .progress-bar--circle {
+    background-color: #1d304c;
+  }
+
+  .ingredient-marker-link:focus-visible {
+    outline: 3px solid rgba(29, 48, 76, 0.35);
+    outline-offset: 3px;
+  }
 </style>
+
+<script>
+  const timelineSelector = '[data-ingredient-timeline]';
+  const scrollSpyOffset = 400;
+  const anchorOffset = 55;
+  let animationFrame = 0;
+
+  function updateTimelines() {
+    animationFrame = 0;
+
+    document.querySelectorAll<HTMLElement>(timelineSelector).forEach((section) => {
+      const timeline = section.querySelector<HTMLElement>('.ingredient-timeline');
+      const track = section.querySelector<HTMLElement>('.progress-bar');
+      const increment = section.querySelector<HTMLElement>('.progress-bar--increment');
+      const links = Array.from(section.querySelectorAll<HTMLAnchorElement>('.ingredient-marker-link'));
+      const articles = Array.from(section.querySelectorAll<HTMLElement>('[data-ingredient-article]'));
+
+      if (!timeline || !track || !increment || links.length === 0 || articles.length === 0) return;
+
+      const timelineTop = timeline.getBoundingClientRect().top;
+      const markerCenters = links.map((link) => {
+        const rect = link.getBoundingClientRect();
+        return rect.top - timelineTop + rect.height / 2;
+      });
+      const trackTop = markerCenters[0];
+      const trackHeight = Math.max(0, markerCenters.at(-1)! - trackTop);
+      const firstMarkerTop = links[0].getBoundingClientRect().top;
+      const fillHeight = Math.min(trackHeight, Math.max(0, scrollSpyOffset - firstMarkerTop));
+
+      track.style.top = `${trackTop}px`;
+      track.style.height = `${trackHeight}px`;
+      increment.style.top = `${trackTop}px`;
+      increment.style.height = `${fillHeight}px`;
+
+      let activeIndex = -1;
+      articles.forEach((article, index) => {
+        if (article.getBoundingClientRect().top <= scrollSpyOffset) activeIndex = index;
+      });
+
+      links.forEach((link, index) => {
+        const isActive = index === activeIndex;
+        link.classList.toggle('active', isActive);
+        if (isActive) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    });
+  }
+
+  function scheduleTimelineUpdate() {
+    if (!animationFrame) animationFrame = window.requestAnimationFrame(updateTimelines);
+  }
+
+  function initializeTimelines() {
+    document.querySelectorAll<HTMLElement>(timelineSelector).forEach((section) => {
+      if (section.dataset.timelineInitialized === 'true') return;
+      section.dataset.timelineInitialized = 'true';
+
+      section.querySelectorAll<HTMLAnchorElement>('.ingredient-marker-link').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const targetId = link.hash.slice(1);
+          const target = document.getElementById(targetId);
+          if (!target) return;
+
+          event.preventDefault();
+          const top = window.scrollY + target.getBoundingClientRect().top - anchorOffset;
+          const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+          window.scrollTo({ top, behavior });
+        });
+      });
+    });
+
+    scheduleTimelineUpdate();
+  }
+
+  window.addEventListener('scroll', scheduleTimelineUpdate, { passive: true });
+  window.addEventListener('resize', scheduleTimelineUpdate);
+  document.addEventListener('astro:page-load', initializeTimelines);
+  initializeTimelines();
+</script>

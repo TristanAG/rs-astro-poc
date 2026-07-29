@@ -1,13 +1,18 @@
 ---
 import { storyblokEditable, renderRichText } from '@storyblok/astro';
 
-const { blok } = Astro.props;
+const { blok, timelineId = `top-ingredient-${blok._uid}` } = Astro.props;
 const copy = renderRichText(blok.copy);
 const editors_note = renderRichText(blok.editors_note);
 const editors_note_highlighted_text_color = blok.editors_note_highlighted_text_color;
 ---
 
-<div {...storyblokEditable(blok)} class="ingredient-item">
+<article
+  {...storyblokEditable(blok)}
+  id={timelineId}
+  class="ingredient-item"
+  data-ingredient-article
+>
   <p class="ingredient-item-text">
     {blok.title && <strong class="ingredient-title">{blok.title} </strong>}
     {blok.copy && <span class="ingredient-copy" set:html={copy} />}
@@ -17,16 +22,24 @@ const editors_note_highlighted_text_color = blok.editors_note_highlighted_text_c
     &nbsp;
     {blok.editors_note && <span class="editors-note-text" set:html={editors_note} />}
   </p>
-</div>
+</article>
 
 <style>
+  .ingredient-item {
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .ingredient-item-text {
+    margin: 0;
+  }
+
   .ingredient-title {
     font-family: 'poppins', sans-serif;
     font-weight: 400;
     margin: 0;
     font-size: 26px;
     line-height: 26px;
-    padding-left: 15px;
     text-align: left;
   }
 
