@@ -75,6 +75,7 @@ const content = renderRichText(blok.content);
     background: transparent;
     color: #29b6dc;
     box-sizing: border-box;
+    transition: background 200ms ease, color 200ms ease;
   }
 
   .accordion-arrow::before {
@@ -86,7 +87,12 @@ const content = renderRichText(blok.content);
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
     border-top: 8px solid currentColor;
-    transition: transform 200ms ease;
+    transition: transform 200ms ease, border-top-color 200ms ease;
+  }
+
+  .accordion-item.is-open .accordion-arrow {
+    background: #29b6dc;
+    color: #fff;
   }
 
   .accordion-item.is-open .accordion-arrow::before {

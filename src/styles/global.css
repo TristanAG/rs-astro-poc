@@ -98,7 +98,9 @@ a {
     color:#0927bd; 
 }
 
-
+h2 {
+    font-family: 'Poppins', sans-serif;
+}
 h3 {
     font-family: 'Poppins', sans-serif;
     font-size: 36px;
