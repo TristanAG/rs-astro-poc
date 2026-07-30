@@ -44,6 +44,18 @@ const toBarWidth = (value: unknown) => {
   if (Number.isNaN(numeric)) return 0;
   return `${Math.min(Math.max(numeric, 0), 10) * 10}%`;
 };
+
+const pros = blok.pros ?? [];
+const cons = blok.cons ?? [];
+const prosSplitIndex = Math.ceil(pros.length / 2);
+const prosLeft = pros.slice(0, prosSplitIndex);
+const prosRight = pros.slice(prosSplitIndex);
+const useTwoColumnCons = cons.length > 4;
+const consSplitIndex = Math.ceil(cons.length / 2);
+const consLeft = useTwoColumnCons ? cons.slice(0, consSplitIndex) : [];
+const consRight = useTwoColumnCons ? cons.slice(consSplitIndex) : [];
+const remarks = blok.remarks || blok.disclaimer || '';
+const showChoose = why_we_chose_it || remarks || productUrl;
 ---
 
 <article {...storyblokEditable(blok)} class="supplement-item">
@@ -107,22 +119,81 @@ const toBarWidth = (value: unknown) => {
   </CardTag>
 
   <div class="supplement-item-details">
-    <section class="supplement-item-pros">
-      <h4>Pros</h4>
-      {blok.pros?.map((item: any) => (
-        <StoryblokComponent blok={item} icon={blok.pro_asset} />
-      ))}
-    </section>
+    {pros.length > 0 && (
+      <div class="pros">
+        <h5>PROS</h5>
+        {prosRight.length > 0 ? (
+          <>
+            <div class="left">
+              <ul>
+                {prosLeft.map((item: any) => (
+                  <StoryblokComponent blok={item} />
+                ))}
+              </ul>
+            </div>
+            <div class="right">
+              <ul>
+                {prosRight.map((item: any) => (
+                  <StoryblokComponent blok={item} />
+                ))}
+              </ul>
+            </div>
+            <div class="clearfix"></div>
+          </>
+        ) : (
+          <div class="full-width-div">
+            <ul>
+              {prosLeft.map((item: any) => (
+                <StoryblokComponent blok={item} />
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    )}
 
-    <section class="supplement-item-cons">
-      <h4>Cons</h4>
-      {blok.cons?.map((item: any) => (
-        <StoryblokComponent blok={item} icon={blok.con_asset} />
-      ))}
-    </section>
+    {cons.length > 0 && (
+      <div class="cons">
+        <h5>CONS</h5>
+        {useTwoColumnCons ? (
+          <>
+            <div class="left">
+              <ul>
+                {consLeft.map((item: any) => (
+                  <StoryblokComponent blok={item} />
+                ))}
+              </ul>
+            </div>
+            <div class="right">
+              <ul>
+                {consRight.map((item: any) => (
+                  <StoryblokComponent blok={item} />
+                ))}
+              </ul>
+            </div>
+            <div class="clearfix"></div>
+          </>
+        ) : (
+          <ul>
+            {cons.map((item: any) => (
+              <StoryblokComponent blok={item} />
+            ))}
+          </ul>
+        )}
+      </div>
+    )}
 
-    {blok.why_we_chose_it && (
-      <div class="supplement-item-why" set:html={why_we_chose_it} />
+    {showChoose && (
+      <div class="choose">
+        <h5>Why We Chose It</h5>
+        {why_we_chose_it && (
+          <div class="choose-copy" set:html={why_we_chose_it} />
+        )}
+        {remarks && <p class="remarks">{remarks}</p>}
+        {productUrl && (
+          <a href={productUrl}>FIND OUT MORE &gt;&gt;</a>
+        )}
+      </div>
     )}
   </div>
 </article>
@@ -288,21 +359,292 @@ const toBarWidth = (value: unknown) => {
   }
 
   .supplement-item-details {
-    margin-top: 24px;
+    margin-top: 12px;
+    border: 2px solid #a1a1a1;
   }
 
-  .supplement-item-pros,
-  .supplement-item-cons {
-    margin-top: 1.5rem;
+  .supplement-item-details .full-width-div {
+    width: 100%;
+    float: none;
   }
 
-  .supplement-item-pros h4,
-  .supplement-item-cons h4 {
-    margin-bottom: 0.75rem;
+  .supplement-item-details .pros {
+    padding: 12px 15px;
+    border-bottom: 2px solid #a1a1a1;
   }
 
-  .supplement-item-why {
-    margin-top: 1.5rem;
+  .supplement-item-details .pros h5,
+  .supplement-item-details .cons h5,
+  .supplement-item-details .choose h5 {
+    position: relative;
+    margin: 0;
+    color: #000;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 36px;
+    text-align: center;
+  }
+
+  .supplement-item-details .pros h5 {
+    margin-bottom: 28px;
+  }
+
+  .supplement-item-details .cons h5 {
+    margin-bottom: 17px;
+  }
+
+  .supplement-item-details .choose h5 {
+    margin-bottom: 22px;
+  }
+
+  .supplement-item-details h5::after {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 41px;
+    height: 2px;
+    transform: translateX(-50%);
+    background: #a1a1a1;
+    content: '';
+  }
+
+  .supplement-item-details .left {
+    width: 51%;
+    float: left;
+  }
+
+  .supplement-item-details .right {
+    width: 45%;
+    float: right;
+    margin-left: 21px;
+  }
+
+  .supplement-item-details ul {
+    margin: 0;
+    padding-left: 50px;
+    list-style: none;
+  }
+
+  .supplement-item-details ul li {
+    position: relative;
+    margin-bottom: 25px;
+    color: #000;
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 34.81px;
+  }
+
+  .supplement-item-details ul li:last-child {
+    margin-bottom: 0;
+  }
+
+  .supplement-item-details .pros ul li span {
+    font-weight: 700;
+  }
+
+  .supplement-item-details .pros ul li::before {
+    position: absolute;
+    top: 2px;
+    left: -30px;
+    color: #00aa00;
+    font-size: 20px;
+    line-height: 1;
+    content: '✓';
+  }
+
+  .supplement-item-details .cons {
+    padding: 12px 15px;
+    border-bottom: 2px solid #a1a1a1;
+  }
+
+  .supplement-item-details .cons ul li::before {
+    position: absolute;
+    top: 0;
+    left: -30px;
+    color: #cc3333;
+    font-size: 20px;
+    line-height: 1;
+    content: '✗';
+  }
+
+  .supplement-item-details .choose {
+    padding: 12px 15px;
+  }
+
+  .supplement-item-details .choose-copy :global(p) {
+    margin: 0 0 35px;
+    color: #000;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0;
+  }
+
+  .supplement-item-details .choose-copy :global(p:last-child) {
+    margin-bottom: 35px;
+  }
+
+  .supplement-item-details .choose-copy :global(span),
+  .supplement-item-details .choose-copy :global(strong) {
+    font-weight: 700;
+  }
+
+  .supplement-item-details .choose p.remarks {
+    margin-top: -9px;
+    margin-bottom: 37px;
+    color: #000;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  .supplement-item-details .choose a {
+    display: table;
+    margin: 0 auto 20px;
+    padding: 16px 38px 16px 49px;
+    border: none;
+    border-radius: 10px;
+    background: #cc3333;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 30px;
+    text-decoration: none;
+  }
+
+  .supplement-item-details br {
+    display: none;
+  }
+
+  .clearfix::after {
+    display: block;
+    clear: both;
+    content: '';
+  }
+
+  @media (max-width: 767px) {
+    .supplement-item-details .left,
+    .supplement-item-details .right {
+      float: none;
+      width: 100%;
+      margin-left: inherit;
+    }
+
+    .supplement-item-details .right {
+      margin-top: 10px;
+    }
+
+    .supplement-item-details ul {
+      padding-left: 37px;
+    }
+
+    .supplement-item-details .cons ul li::before {
+      left: -26px;
+    }
+
+    .supplement-item-details {
+      margin-bottom: 15px;
+    }
+
+    .supplement-item-details .choose h5 {
+      font-size: 30px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .supplement-item-details {
+      margin-top: 0;
+    }
+
+    .supplement-item-details .pros h5,
+    .supplement-item-details .cons h5 {
+      margin-bottom: 0;
+      font-size: 22px;
+      line-height: 38px;
+      text-align: left;
+    }
+
+    .supplement-item-details .pros h5::after {
+      display: none;
+    }
+
+    .supplement-item-details .pros,
+    .supplement-item-details .cons {
+      padding: 0 10px 10px;
+    }
+
+    .supplement-item-details ul li {
+      margin-bottom: 15px;
+      font-size: 17px;
+      line-height: 22px;
+    }
+
+    .supplement-item-details ul li:last-child {
+      margin-bottom: 15px;
+    }
+
+    .supplement-item-details .right ul li:last-child {
+      margin-bottom: 0;
+    }
+
+    .supplement-item-details .pros ul li::before {
+      top: 0;
+    }
+
+    .supplement-item-details ul li :global(strong) {
+      font-weight: 600;
+    }
+
+    .supplement-item-details .choose h5 {
+      font-size: 22px;
+      line-height: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    .supplement-item-details .choose-copy :global(p) {
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: -0.5px;
+      line-height: 22px;
+    }
+
+    .supplement-item-details .choose-copy :global(strong) {
+      font-weight: 600;
+    }
+
+    .supplement-item-details .choose {
+      padding: 12px 10px 0;
+    }
+
+    .supplement-item-details .choose p.remarks {
+      margin-bottom: 14px;
+      font-size: 9px;
+      line-height: 12px;
+    }
+
+    .supplement-item-details .choose a {
+      font-size: 21px;
+      letter-spacing: -0.5px;
+      line-height: 18px;
+    }
+
+    .supplement-item-details .cons h5::after {
+      display: none;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .supplement-item-details .choose a {
+      font-size: 25px;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .supplement-item-details .choose a {
+      font-size: 19px !important;
+    }
   }
 
   @media (max-width: 1000px) {
