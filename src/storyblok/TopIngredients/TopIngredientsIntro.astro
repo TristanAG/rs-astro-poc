@@ -1,46 +1,7 @@
 ---
-import { storyblokEditable, renderRichText } from '@storyblok/astro';
+import TopSupplementsIntro from '../TopSupplements/TopSupplementsIntro.astro';
 
 const { blok } = Astro.props;
-const copy = renderRichText(blok.copy);
-const top_5_image = blok.top_5_image;
 ---
 
-<section
-  {...storyblokEditable(blok)}
-  class:list={[
-    'top-ingredients-intro',
-    blok.section_id && 'target',
-    blok.mobile_nav_target && 'mobmenu_target',
-  ]}
-  id={blok.section_id?.trim() || undefined}
->
-  {top_5_image?.filename && (
-    <img
-      class="top-ingredients-intro__image"
-      src={top_5_image.filename}
-      alt={top_5_image.alt || ''}
-    />
-  )}
-  {blok.title && <h2>{blok.title}</h2>}
-  {blok.copy && <p set:html={copy}></p>}
-</section>
-
-<style>
-  .top-ingredients-intro__image {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
-    height: auto;
-  }
-
-  h2 {
-    font-family: 'poppins', sans-serif;
-    font-weight: 500;
-    font-size: 36px;
-    line-height: 36px;
-    color: #000;
-    text-align: center;
-    margin-bottom: 23px;
-  }
-</style>
+<TopSupplementsIntro blok={blok} />

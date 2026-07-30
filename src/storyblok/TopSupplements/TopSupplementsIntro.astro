@@ -1,0 +1,45 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+const copy = renderRichText(blok.copy);
+const top_5_image = blok.top_5_image;
+---
+
+<section
+  {...storyblokEditable(blok)}
+  class:list={[
+    'top-supplements-intro',
+    blok.section_id && 'target',
+    blok.mobile_nav_target && 'mobmenu_target',
+  ]}
+  id={blok.section_id?.trim() || undefined}
+>
+  {top_5_image?.filename && (
+    <img
+      class="top-supplements-intro__image"
+      src={top_5_image.filename}
+      alt={top_5_image.alt || ''}
+    />
+  )}
+  {blok.title && <h2>{blok.title}</h2>}
+  {blok.copy && <div set:html={copy}></div>}
+</section>
+
+<style>
+  .top-supplements-intro__image {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+  }
+
+  h2 {
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 40px;
+    color: #000;
+    margin-bottom: 34px;
+    text-align: center;
+  }
+</style>
