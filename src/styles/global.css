@@ -177,10 +177,6 @@ h3 {
   padding-top: 12px;
 }
 
-.toc ul li {
-  margin-bottom: 24px;
-}
-
 .toc ul li:last-child {
   margin-bottom: 0;
 }
