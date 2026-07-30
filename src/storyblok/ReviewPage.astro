@@ -40,26 +40,32 @@ function partitionBody(body: SbBlokData[] = []) {
   return { tocBlock, beforeFullWidth, fullWidthBlocks, afterFullWidth };
 }
 
-function splitContainerBlocks(blocks: SbBlokData[] = []) {
-  const contentBlocks: SbBlokData[] = [];
+function partitionContainerBlocks(blocks: SbBlokData[] = []) {
+  const leadingContentBlocks: SbBlokData[] = [];
   const reviewBlocks: SbBlokData[] = [];
+  const trailingContentBlocks: SbBlokData[] = [];
+  let passedReviewSection = false;
 
   for (const block of blocks) {
     if (REVIEW_SECTION_COMPONENTS.has(block.component ?? '')) {
+      passedReviewSection = true;
       reviewBlocks.push(block);
+    } else if (passedReviewSection) {
+      trailingContentBlocks.push(block);
     } else {
-      contentBlocks.push(block);
+      leadingContentBlocks.push(block);
     }
   }
 
-  return { contentBlocks, reviewBlocks };
+  return { leadingContentBlocks, reviewBlocks, trailingContentBlocks };
 }
 
 const { tocBlock, beforeFullWidth, fullWidthBlocks, afterFullWidth } = partitionBody(
   blok.body ?? [],
 );
 const hasToc = Boolean(tocBlock);
-const { contentBlocks, reviewBlocks } = splitContainerBlocks(afterFullWidth);
+const { leadingContentBlocks, reviewBlocks, trailingContentBlocks } =
+  partitionContainerBlocks(afterFullWidth);
 ---
 
 <div {...storyblokEditable(blok)}>
@@ -88,7 +94,7 @@ const { contentBlocks, reviewBlocks } = splitContainerBlocks(afterFullWidth);
               <TocSidebar blok={tocBlock} />
 
               <div class="left-contents" data-toc-content>
-                {contentBlocks.map((nestedBlok) => (
+                {leadingContentBlocks.map((nestedBlok) => (
                   <StoryblokComponent blok={nestedBlok} />
                 ))}
               </div>
@@ -97,6 +103,14 @@ const { contentBlocks, reviewBlocks } = splitContainerBlocks(afterFullWidth);
             {reviewBlocks.length > 0 && (
               <div class="review_details_sec">
                 {reviewBlocks.map((nestedBlok) => (
+                  <StoryblokComponent blok={nestedBlok} />
+                ))}
+              </div>
+            )}
+
+            {trailingContentBlocks.length > 0 && (
+              <div class="review_details_sec">
+                {trailingContentBlocks.map((nestedBlok) => (
                   <StoryblokComponent blok={nestedBlok} />
                 ))}
               </div>
