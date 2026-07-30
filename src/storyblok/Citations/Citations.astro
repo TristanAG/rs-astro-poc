@@ -1,0 +1,73 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+const items: SbBlokData[] = blok.citations ?? blok.citation_item ?? [];
+---
+
+<div class="citation-area">
+  <h5>Citations</h5>
+
+  <ol {...storyblokEditable(blok)} class="citations">
+    {items.map((item) => (
+      <li>
+        <StoryblokComponent blok={item} />
+      </li>
+    ))}
+  </ol>
+  
+</div>
+
+
+<style>
+  .citations {
+    list-style: none;
+    margin: 0 0 0 30px;
+    padding: 0;
+    counter-reset: citation;
+  }
+
+  .citations :global(li) {
+    counter-increment: citation;
+    position: relative;
+    padding-left: .5rem;
+    font-size: 14px;
+    line-height: 2;
+    letter-spacing: -1px;
+    font-weight: 400;
+    margin-bottom: 15px;
+  }
+
+  .citations :global(li::before) {
+    content: counter(citation) '.';
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+    line-height: 2;
+    letter-spacing: -1px;
+    font-weight: 400;
+  }
+
+  .citation-area > h5 {
+    font-family: 'poppins', sans-serif;
+    position: relative;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 22px;
+    color: #000;
+    text-align: left;
+    margin: 20px 0;
+  }
+
+  .citation-area > h5::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 5%;
+    width: 41px;
+    height: 2px;
+    background: #a1a1a1;
+    transform: translateX(-50%);
+  }
+</style>
