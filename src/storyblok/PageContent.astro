@@ -8,7 +8,7 @@ const content_area_two = renderRichText(blok.content_area_two);
 const content_area_three = renderRichText(blok.content_area_three);
 ---
 
-<section
+<section id="sec1"
   {...storyblokEditable(blok)}
   class:list={['page-content', blok.section_id && 'target', blok.mobile_nav_target && 'mobmenu_target']}
   id={blok.section_id?.trim() || undefined}
@@ -19,7 +19,7 @@ const content_area_three = renderRichText(blok.content_area_three);
 
     <div set:html={content_area_two} />
 
-    <h3>{blok.what_are_they_about_title}</h3>
+    <h3 id="sec2">{blok.what_are_they_about_title}</h3>
     
     <div set:html={content_area_three} />
 </section>

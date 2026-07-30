@@ -5,7 +5,7 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 const { blok } = Astro.props;
 ---
 
-<section
+<section id="sec3"
   {...storyblokEditable(blok)}
   class:list={['benefit-section', blok.section_id && 'target', blok.mobile_nav_target && 'mobmenu_target']}
   id={blok.section_id?.trim() || undefined}
