@@ -27,12 +27,44 @@ const ratingBars = [
 const grade = blok.overall_crade || '';
 const gradeCircleBackground =
   'https://a.storyblok.com/f/293683996317857/165x165/1c304a7e88/prg-01_a_plus_100.webp';
-const productUrl =
-  blok.product_link?.url ||
-  blok.product_link?.cached_url ||
-  blok.affiliate_url ||
-  '';
-const CardTag = rank === 1 && productUrl ? 'a' : 'div';
+const resolveLinkHref = (link: unknown) => {
+  if (!link) return '';
+  if (typeof link === 'string') return link.trim();
+  if (typeof link !== 'object') return '';
+
+  const storyblokLink = link as {
+    linktype?: string;
+    email?: string;
+    url?: string;
+    cached_url?: string;
+    target?: string;
+  };
+
+  if (storyblokLink.linktype === 'email') {
+    const email = storyblokLink.email ?? storyblokLink.url ?? '';
+    return email ? `mailto:${email}` : '';
+  }
+  if (storyblokLink.linktype === 'story') {
+    const slug = storyblokLink.cached_url || storyblokLink.url || '';
+    if (!slug) return '';
+    return slug.startsWith('/') ? slug : `/${slug}`;
+  }
+  return (storyblokLink.url || storyblokLink.cached_url || '').trim();
+};
+
+const productLink = blok.product_link;
+const productUrl = resolveLinkHref(productLink);
+const productLinkTarget =
+  typeof productLink === 'object' &&
+  productLink !== null &&
+  productLink.target === '_blank'
+    ? '_blank'
+    : undefined;
+const productLinkRel = productLinkTarget ? 'noopener noreferrer' : undefined;
+const productLinkAttrs = productLinkTarget
+  ? { target: productLinkTarget, rel: productLinkRel }
+  : {};
+const CardTag = productUrl ? 'a' : 'div';
 
 const formatRating = (value: unknown) => {
   const numeric = Number(value);
@@ -61,7 +93,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 <article {...storyblokEditable(blok)} class="supplement-item">
   <CardTag
     class:list={['supplement-item-card', { 'supplement-item-link': CardTag === 'a' }]}
-    href={CardTag === 'a' ? productUrl : undefined}
+    {...CardTag === 'a' ? { href: productUrl, ...productLinkAttrs } : {}}
   >
     {blok.title && (
       <h3 class="supplement-item-mobile-title">#{rank} {blok.title}</h3>
@@ -191,7 +223,11 @@ const showChoose = why_we_chose_it || remarks || productUrl;
         )}
         {remarks && <p class="remarks">{remarks}</p>}
         {productUrl && (
-          <a href={productUrl}>FIND OUT MORE &gt;&gt;</a>
+          <div class="choose-cta">
+            <a class="choose-cta__link" href={productUrl} {...productLinkAttrs}>
+              FIND OUT MORE &gt;&gt;
+            </a>
+          </div>
         )}
       </div>
     )}
@@ -202,11 +238,12 @@ const showChoose = why_we_chose_it || remarks || productUrl;
   .supplement-item {
     max-width: 987px;
     margin: 20px auto 40px;
+    padding: 0;
   }
 
   .supplement-item-card {
     display: grid;
-    grid-template-columns: 220px 530px 1fr;
+    grid-template-columns: 220px 560px 1fr;
     overflow: hidden;
     color: inherit;
     border: 2px solid #eaeaea;
@@ -261,12 +298,15 @@ const showChoose = why_we_chose_it || remarks || productUrl;
   .supplement-item-ratings ul {
     margin: 0;
     padding: 5px;
+    padding-left: 0;
     list-style: none;
+    list-style-type: none;
   }
 
   .supplement-item-ratings li {
     margin: 0;
     padding: 5px;
+    list-style: none;
     border-bottom: 1px solid #a1a1a1;
   }
 
@@ -319,21 +359,21 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     grid-column: 3;
     grid-row: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     min-width: 0;
-    padding: 20px 12px;
+    padding: 15px 12px 20px;
     text-align: center;
   }
 
   .grade-circle {
     display: flex;
-    width: 185px;
-    height: 185px;
+    width: 175px;
+    height: 175px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 20px auto 0;
+    margin: 0 auto;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100%;
@@ -343,7 +383,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 
   .grade-value {
     color: #000;
-    font-size: 52px;
+    font-size: 48px;
     font-weight: 700;
     line-height: 1;
     transform: translateY(-6px);
@@ -423,7 +463,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 
   .supplement-item-details ul {
     margin: 0;
-    padding-left: 50px;
+    padding-left: 0;
     list-style: none;
   }
 
@@ -484,13 +524,17 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     line-height: 18px;
   }
 
-  .supplement-item-details .choose a {
+  .supplement-item-details .choose-cta {
+    margin: 0;
+  }
+
+  .supplement-item-details .choose-cta__link {
     display: table;
     margin: 0 auto 20px;
     padding: 16px 38px 16px 49px;
     border: none;
     border-radius: 10px;
-    background: #cc3333;
+    background: #c33;
     color: #fff;
     font-size: 30px;
     font-weight: 600;
@@ -518,10 +562,6 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 
     .supplement-item-details .right {
       margin-top: 10px;
-    }
-
-    .supplement-item-details ul {
-      padding-left: 37px;
     }
 
     .supplement-item-details {
@@ -604,7 +644,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
       line-height: 12px;
     }
 
-    .supplement-item-details .choose a {
+    .supplement-item-details .choose-cta__link {
       font-size: 21px;
       letter-spacing: -0.5px;
       line-height: 18px;
@@ -616,20 +656,20 @@ const showChoose = why_we_chose_it || remarks || productUrl;
   }
 
   @media (max-width: 479px) {
-    .supplement-item-details .choose a {
+    .supplement-item-details .choose-cta__link {
       font-size: 25px;
     }
   }
 
   @media (max-width: 340px) {
-    .supplement-item-details .choose a {
+    .supplement-item-details .choose-cta__link {
       font-size: 19px !important;
     }
   }
 
   @media (max-width: 1000px) {
     .supplement-item-card {
-      grid-template-columns: 20% 48% 32%;
+      grid-template-columns: 20% 51% 29%;
     }
 
     .supplement-item-image {
@@ -707,13 +747,14 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     }
 
     .supplement-item-grade {
-      padding: 15px 8px;
+      align-items: flex-start;
+      padding: 12px 8px;
     }
 
     .grade-circle {
-      width: 135px;
-      height: 135px;
-      margin-top: 10px;
+      width: 128px;
+      height: 128px;
+      margin: 0 auto;
       background-size: 100%;
     }
 
@@ -743,6 +784,8 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 
     .supplement-item-ratings ul {
       padding: 0;
+      list-style: none;
+      list-style-type: none;
     }
 
     .supplement-item-ratings li {

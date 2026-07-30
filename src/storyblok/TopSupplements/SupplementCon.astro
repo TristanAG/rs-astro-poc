@@ -15,27 +15,23 @@ const consIcon =
     class="pro-con-icon"
     aria-hidden="true"
   />
-  {blok.con_lead && <span>{blok.con_lead}</span>}
-  {blok.con}
+  <div class="pro-con-text">
+    {blok.con_lead && <span>{blok.con_lead}</span>}
+    {blok.con}
+  </div>
 </li>
 
 <style>
   li {
-    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
     list-style: none;
   }
 
   .pro-con-icon {
-    position: absolute;
-    top: 0;
-    left: -30px;
+    flex-shrink: 0;
     width: 28px;
     height: 28px;
-  }
-
-  @media (max-width: 767px) {
-    .pro-con-icon {
-      left: -26px;
-    }
   }
 </style>
