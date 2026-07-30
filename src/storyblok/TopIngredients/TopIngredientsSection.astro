@@ -8,7 +8,16 @@ const timelineId = `top-ingredients-${blok._uid}`;
 const items: SbBlokData[] = blok.items ?? [];
 ---
 
-<section {...storyblokEditable(blok)} class="top-ingredients-section" data-ingredient-timeline>
+<section
+  {...storyblokEditable(blok)}
+  class:list={[
+    'top-ingredients-section',
+    blok.section_id && 'target',
+    blok.mobile_nav_target && 'mobmenu_target',
+  ]}
+  id={blok.section_id?.trim() || undefined}
+  data-ingredient-timeline
+>
   {blok.title && <h2>{blok.title}</h2>}
   {blok.copy && <p set:html={copy}></p>}
 

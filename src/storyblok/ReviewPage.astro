@@ -1,49 +1,116 @@
 ---
-import { storyblokEditable } from '@storyblok/astro';
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import TocScrollSpy from './TocNav/TocScrollSpy.astro';
+import TocMobileNav from './TocNav/TocMobileNav.astro';
+import TocSidebar from './TocNav/TocSidebar.astro';
 
 const { blok } = Astro.props;
 
 const FULL_WIDTH_COMPONENTS = new Set(['three_col_header']);
+const TOC_COMPONENT = 'toc_nav';
+const REVIEW_SECTION_COMPONENTS = new Set(['top_supplements_section']);
 
-function groupBodyBlocks(body = []) {
-  const groups = [];
-  let containerBlocks = [];
+function partitionBody(body: SbBlokData[] = []) {
+  const beforeFullWidth: SbBlokData[] = [];
+  const fullWidthBlocks: SbBlokData[] = [];
+  const afterFullWidth: SbBlokData[] = [];
+  let tocBlock: SbBlokData | null = null;
+  let passedFullWidth = false;
 
   for (const block of body) {
-    if (FULL_WIDTH_COMPONENTS.has(block.component)) {
-      if (containerBlocks.length > 0) {
-        groups.push({ type: 'container', blocks: containerBlocks });
-        containerBlocks = [];
-      }
-      groups.push({ type: 'fullWidth', block });
+    if (block.component === TOC_COMPONENT) {
+      tocBlock = block;
+      continue;
+    }
+
+    if (FULL_WIDTH_COMPONENTS.has(block.component ?? '')) {
+      fullWidthBlocks.push(block);
+      passedFullWidth = true;
+      continue;
+    }
+
+    if (passedFullWidth) {
+      afterFullWidth.push(block);
     } else {
-      containerBlocks.push(block);
+      beforeFullWidth.push(block);
     }
   }
 
-  if (containerBlocks.length > 0) {
-    groups.push({ type: 'container', blocks: containerBlocks });
-  }
-
-  return groups;
+  return { tocBlock, beforeFullWidth, fullWidthBlocks, afterFullWidth };
 }
 
-const groups = groupBodyBlocks(blok.body);
+function splitContainerBlocks(blocks: SbBlokData[] = []) {
+  const contentBlocks: SbBlokData[] = [];
+  const reviewBlocks: SbBlokData[] = [];
+
+  for (const block of blocks) {
+    if (REVIEW_SECTION_COMPONENTS.has(block.component ?? '')) {
+      reviewBlocks.push(block);
+    } else {
+      contentBlocks.push(block);
+    }
+  }
+
+  return { contentBlocks, reviewBlocks };
+}
+
+const { tocBlock, beforeFullWidth, fullWidthBlocks, afterFullWidth } = partitionBody(
+  blok.body ?? [],
+);
+const hasToc = Boolean(tocBlock);
+const { contentBlocks, reviewBlocks } = splitContainerBlocks(afterFullWidth);
 ---
 
 <div {...storyblokEditable(blok)}>
   {
-    groups.map((group) =>
-      group.type === 'fullWidth' ? (
-        <StoryblokComponent blok={group.block} />
+    beforeFullWidth.length > 0 && (
+      <div class="container container--content">
+        {beforeFullWidth.map((nestedBlok) => (
+          <StoryblokComponent blok={nestedBlok} />
+        ))}
+      </div>
+    )
+  }
+
+  {fullWidthBlocks.map((block) => (
+    <StoryblokComponent blok={block} />
+  ))}
+
+  {
+    afterFullWidth.length > 0 &&
+      (hasToc && tocBlock ? (
+        <section class="main-container padding-top-30" id="content_main">
+          <div class="container">
+            <TocMobileNav blok={tocBlock} />
+
+            <div class="sub-container">
+              <TocSidebar blok={tocBlock} />
+
+              <div class="left-contents" data-toc-content>
+                {contentBlocks.map((nestedBlok) => (
+                  <StoryblokComponent blok={nestedBlok} />
+                ))}
+              </div>
+            </div>
+
+            {reviewBlocks.length > 0 && (
+              <div class="review_details_sec">
+                {reviewBlocks.map((nestedBlok) => (
+                  <StoryblokComponent blok={nestedBlok} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
       ) : (
         <div class="container container--content">
-          {group.blocks.map((nestedBlok) => (
+          {afterFullWidth.map((nestedBlok) => (
             <StoryblokComponent blok={nestedBlok} />
           ))}
         </div>
-      ),
-    )
+      ))
   }
+
+  {hasToc && <TocScrollSpy />}
 </div>

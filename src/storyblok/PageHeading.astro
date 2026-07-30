@@ -10,7 +10,11 @@ const hasAuthorSection =
   blok.author_description;
 ---
 
-<section {...storyblokEditable(blok)} class="page-heading">
+<section
+  {...storyblokEditable(blok)}
+  class:list={['page-heading', blok.section_id && 'target', blok.mobile_nav_target && 'mobmenu_target']}
+  id={blok.section_id?.trim() || undefined}
+>
   {blok.title && <h1>{blok.title}</h1>}
 
   {hasAuthorSection && (

@@ -5,7 +5,11 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 const { blok } = Astro.props;
 ---
 
-<section {...storyblokEditable(blok)} class="accordion-section">
+<section
+  {...storyblokEditable(blok)}
+  class:list={['accordion-section', blok.section_id && 'target', blok.mobile_nav_target && 'mobmenu_target']}
+  id={blok.section_id?.trim() || undefined}
+>
   {blok.heading && <h3>{blok.heading}</h3>}
 
   <div class="accordion" data-accordion>

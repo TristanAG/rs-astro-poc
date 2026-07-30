@@ -1,0 +1,23 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+
+const sectionId = blok.section_id?.trim();
+const items: SbBlokData[] = blok.body ?? blok.content ?? [];
+---
+
+<div
+  {...storyblokEditable(blok)}
+  id={sectionId || undefined}
+  class:list={[
+    'toc-anchor',
+    sectionId && 'target',
+    blok.mobile_nav_target && 'mobmenu_target',
+  ]}
+>
+  {items.map((item) => (
+    <StoryblokComponent blok={item} />
+  ))}
+</div>

@@ -1,0 +1,23 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+
+const items: SbBlokData[] = blok.items ?? blok.toc_link ?? [];
+const title = blok.title ?? 'In This Guide';
+---
+
+<aside class="toc" data-toc-nav aria-label={title} {...storyblokEditable(blok)}>
+  <h3>{title}</h3>
+  <ul>
+    {items.map((item, index) => (
+      <li>
+        <StoryblokComponent
+          blok={item}
+          class:list={[index === 0 && 'active']}
+        />
+      </li>
+    ))}
+  </ul>
+</aside>

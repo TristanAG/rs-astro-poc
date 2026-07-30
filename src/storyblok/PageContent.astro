@@ -8,7 +8,11 @@ const content_area_two = renderRichText(blok.content_area_two);
 const content_area_three = renderRichText(blok.content_area_three);
 ---
 
-<section {...storyblokEditable(blok)} class="page-content">
+<section
+  {...storyblokEditable(blok)}
+  class:list={['page-content', blok.section_id && 'target', blok.mobile_nav_target && 'mobmenu_target']}
+  id={blok.section_id?.trim() || undefined}
+>
     <div set:html={content_area_one} />
    
     <h3>{blok.how_to_title}</h3>

@@ -1,0 +1,17 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+
+const { blok, class: className = '' } = Astro.props;
+
+const sectionId = blok.section_id?.trim();
+const href = sectionId ? `#${sectionId}` : '#';
+---
+
+<a
+  {...storyblokEditable(blok)}
+  href={href}
+  class:list={[className]}
+  data-toc-link={sectionId || undefined}
+>
+  {blok.label}
+</a>

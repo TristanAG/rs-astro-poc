@@ -1,0 +1,19 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+
+const items: SbBlokData[] = blok.items ?? blok.toc_link ?? [];
+const mobileItems = items.filter((item) => item.show_in_mobile_nav);
+---
+
+<nav class="four-fixed-nav" data-toc-mobile-nav aria-label="Page sections">
+  <ul>
+    {mobileItems.map((item) => (
+      <li>
+        <StoryblokComponent blok={item} class="four-fixed-nav__link" />
+      </li>
+    ))}
+  </ul>
+</nav>

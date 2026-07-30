@@ -1,0 +1,121 @@
+<script>
+  const SCROLL_SPY_OFFSET = 400;
+  const ANCHOR_OFFSET = 55;
+  const MOBILE_NAV_BREAKPOINT = 639;
+
+  function getScrollSpyOffset() {
+    return window.innerWidth <= MOBILE_NAV_BREAKPOINT ? ANCHOR_OFFSET : SCROLL_SPY_OFFSET;
+  }
+
+  function updateTocState() {
+    const tocNav = document.querySelector('[data-toc-nav]');
+    if (!tocNav) return;
+
+    const tocLinks = Array.from(tocNav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+    const targets = Array.from(document.querySelectorAll<HTMLElement>('.left-contents .target'));
+    const mobileNav = document.querySelector<HTMLElement>('[data-toc-mobile-nav]');
+    const mobileTargets = Array.from(document.querySelectorAll<HTMLElement>('.mobmenu_target'));
+    const scrollSpyOffset = getScrollSpyOffset();
+    const scrollTop = window.scrollY;
+
+    let activeId = '';
+    targets.forEach((target) => {
+      if (target.getBoundingClientRect().top <= scrollSpyOffset) {
+        activeId = target.id;
+      }
+    });
+
+    tocLinks.forEach((link) => {
+      const isActive = link.dataset.tocLink === activeId;
+      link.classList.toggle('active', isActive);
+      if (isActive) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+
+    if (mobileNav) {
+      const firstTarget = targets[0];
+      const introParagraphs = firstTarget?.querySelectorAll('p') ?? [];
+      const triggerParagraph = introParagraphs[2];
+
+      if (triggerParagraph) {
+        const triggerTop = window.scrollY + triggerParagraph.getBoundingClientRect().top - 50;
+        mobileNav.classList.toggle('active', scrollTop >= triggerTop);
+      }
+
+      let mobileActiveId = '';
+      mobileTargets.forEach((target) => {
+        const top = window.scrollY + target.getBoundingClientRect().top;
+        if (scrollTop >= top - ANCHOR_OFFSET) {
+          mobileActiveId = target.id;
+        }
+      });
+
+      mobileNav.querySelectorAll('li').forEach((item) => {
+        const link = item.querySelector('a');
+        const isActive = link?.getAttribute('href') === `#${mobileActiveId}`;
+        item.classList.toggle('active', isActive);
+      });
+    }
+  }
+
+  function scrollToSection(link: HTMLAnchorElement) {
+    const sectionId = link.dataset.tocLink || link.hash.slice(1);
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+
+    const top = window.scrollY + target.getBoundingClientRect().top - ANCHOR_OFFSET;
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    window.scrollTo({ top, behavior });
+  }
+
+  function initializeToc() {
+    const tocNav = document.querySelector('[data-toc-nav]');
+    if (!tocNav || !(tocNav instanceof HTMLElement) || tocNav.dataset.tocInitialized === 'true') return;
+
+    tocNav.dataset.tocInitialized = 'true';
+
+    document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        scrollToSection(link);
+
+        document.querySelectorAll('[data-toc-link]').forEach((item) => {
+          item.classList.remove('active');
+          item.removeAttribute('aria-current');
+        });
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'true');
+      });
+    });
+
+    document.querySelectorAll<HTMLAnchorElement>('[data-toc-mobile-nav] a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const target = document.getElementById(link.hash.slice(1));
+        if (!target) return;
+
+        const top = window.scrollY + target.getBoundingClientRect().top - ANCHOR_OFFSET;
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        window.scrollTo({ top, behavior });
+      });
+    });
+
+    updateTocState();
+  }
+
+  let animationFrame = 0;
+
+  function scheduleTocUpdate() {
+    if (!animationFrame) {
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = 0;
+        updateTocState();
+      });
+    }
+  }
+
+  window.addEventListener('scroll', scheduleTocUpdate, { passive: true });
+  window.addEventListener('resize', scheduleTocUpdate);
+  document.addEventListener('astro:page-load', initializeToc);
+  initializeToc();
+</script>
