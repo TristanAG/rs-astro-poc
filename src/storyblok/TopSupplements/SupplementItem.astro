@@ -425,8 +425,10 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     list-style: none;
   }
 
-  .supplement-item-details ul li {
+  .supplement-item-details .pros :global(ul li),
+  .supplement-item-details .cons :global(ul li) {
     position: relative;
+    list-style: none;
     margin-bottom: 25px;
     color: #000;
     font-size: 19px;
@@ -435,37 +437,18 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     line-height: 34.81px;
   }
 
-  .supplement-item-details ul li:last-child {
+  .supplement-item-details .pros :global(ul li:last-child),
+  .supplement-item-details .cons :global(ul li:last-child) {
     margin-bottom: 0;
   }
 
-  .supplement-item-details .pros ul li span {
+  .supplement-item-details .pros :global(ul li span) {
     font-weight: 700;
-  }
-
-  .supplement-item-details .pros ul li::before {
-    position: absolute;
-    top: 2px;
-    left: -30px;
-    color: #00aa00;
-    font-size: 20px;
-    line-height: 1;
-    content: '✓';
   }
 
   .supplement-item-details .cons {
     padding: 12px 15px;
     border-bottom: 2px solid #a1a1a1;
-  }
-
-  .supplement-item-details .cons ul li::before {
-    position: absolute;
-    top: 0;
-    left: -30px;
-    color: #cc3333;
-    font-size: 20px;
-    line-height: 1;
-    content: '✗';
   }
 
   .supplement-item-details .choose {
@@ -539,10 +522,6 @@ const showChoose = why_we_chose_it || remarks || productUrl;
       padding-left: 37px;
     }
 
-    .supplement-item-details .cons ul li::before {
-      left: -26px;
-    }
-
     .supplement-item-details {
       margin-bottom: 15px;
     }
@@ -574,25 +553,24 @@ const showChoose = why_we_chose_it || remarks || productUrl;
       padding: 0 10px 10px;
     }
 
-    .supplement-item-details ul li {
+    .supplement-item-details .pros :global(ul li),
+    .supplement-item-details .cons :global(ul li) {
       margin-bottom: 15px;
       font-size: 17px;
       line-height: 22px;
     }
 
-    .supplement-item-details ul li:last-child {
+    .supplement-item-details .pros :global(ul li:last-child),
+    .supplement-item-details .cons :global(ul li:last-child) {
       margin-bottom: 15px;
     }
 
-    .supplement-item-details .right ul li:last-child {
+    .supplement-item-details .right :global(ul li:last-child) {
       margin-bottom: 0;
     }
 
-    .supplement-item-details .pros ul li::before {
-      top: 0;
-    }
-
-    .supplement-item-details ul li :global(strong) {
+    .supplement-item-details .pros :global(ul li strong),
+    .supplement-item-details .cons :global(ul li strong) {
       font-weight: 600;
     }
 
