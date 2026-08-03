@@ -189,7 +189,9 @@ h3 {
 }
 
 .toc ul li a.active,
-.main-container .sub-container .toc ul li a.active {
+.toc ul li a.active:visited,
+.main-container .sub-container .toc ul li a.active,
+.main-container .sub-container .toc ul li a.active:visited {
   color: #000;
   text-decoration: underline;
 }

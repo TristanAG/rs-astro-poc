@@ -7,18 +7,31 @@
     return window.innerWidth <= MOBILE_NAV_BREAKPOINT ? ANCHOR_OFFSET : SCROLL_SPY_OFFSET;
   }
 
+  function getTocSectionTargets(tocLinks: HTMLAnchorElement[]) {
+    return tocLinks.flatMap((link) => {
+      const id = link.dataset.tocLink;
+      if (!id) return [];
+
+      const target = document.getElementById(id);
+      return target ? [target] : [];
+    });
+  }
+
   function updateTocState() {
     const tocNav = document.querySelector('[data-toc-nav]');
     if (!tocNav) return;
 
     const tocLinks = Array.from(tocNav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
-    const targets = Array.from(document.querySelectorAll<HTMLElement>('.left-contents .target'));
+    const targets = getTocSectionTargets(tocLinks);
+    const contentTargets = Array.from(
+      document.querySelectorAll<HTMLElement>('#content_main .left-contents .target'),
+    );
     const mobileNav = document.querySelector<HTMLElement>('[data-toc-mobile-nav]');
     const mobileTargets = Array.from(document.querySelectorAll<HTMLElement>('.mobmenu_target'));
     const scrollSpyOffset = getScrollSpyOffset();
     const scrollTop = window.scrollY;
 
-    let activeId = '';
+    let activeId = tocLinks[0]?.dataset.tocLink ?? '';
     targets.forEach((target) => {
       if (target.getBoundingClientRect().top <= scrollSpyOffset) {
         activeId = target.id;
@@ -33,7 +46,7 @@
     });
 
     if (mobileNav) {
-      const firstTarget = targets[0];
+      const firstTarget = contentTargets[0];
       const introParagraphs = firstTarget?.querySelectorAll('p') ?? [];
       const triggerParagraph = introParagraphs[2];
 
@@ -42,7 +55,7 @@
         mobileNav.classList.toggle('active', scrollTop >= triggerTop);
       }
 
-      let mobileActiveId = '';
+      let mobileActiveId = contentTargets[0]?.id ?? '';
       mobileTargets.forEach((target) => {
         const top = window.scrollY + target.getBoundingClientRect().top;
         if (scrollTop >= top - ANCHOR_OFFSET) {

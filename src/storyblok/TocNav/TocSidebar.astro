@@ -11,12 +11,9 @@ const title = blok.title ?? 'In This Guide';
 <aside class="toc" data-toc-nav aria-label={title} {...storyblokEditable(blok)}>
   <h3>{title}</h3>
   <ul>
-    {items.map((item, index) => (
+    {items.map((item) => (
       <li>
-        <StoryblokComponent
-          blok={item}
-          class:list={[index === 0 && 'active']}
-        />
+        <StoryblokComponent blok={item} />
       </li>
     ))}
   </ul>
