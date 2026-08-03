@@ -1,11 +1,6 @@
 ---
 import type { SbBlokData } from '@storyblok/astro';
-import {
-  MOBILE_NAV_DEFAULT_LABELS,
-  MOBILE_NAV_REVEAL_TARGET_ID,
-  MOBILE_NAV_TARGET_IDS,
-  normalizeMobileNavItems,
-} from './mobileNavTargets';
+import { buildMobileNavItems } from './mobileNavTargets';
 
 interface Props {
   mobileNavItems?: SbBlokData[];
@@ -13,24 +8,9 @@ interface Props {
 
 const { mobileNavItems = [] } = Astro.props;
 
-const normalizedItems = normalizeMobileNavItems(mobileNavItems);
-const mobileNavLabels =
-  normalizedItems.length > 0
-    ? normalizedItems
-    : MOBILE_NAV_DEFAULT_LABELS.map((label) => ({ label }));
-
-/**
- * These IDs are intentionally controlled by the application.
- * Do not make them editable Storyblok fields.
- */
-const items = MOBILE_NAV_TARGET_IDS.map((sectionId, index) => ({
-  sectionId,
-  label: mobileNavLabels[index]?.label || `Section ${index + 1}`,
-  emphasized: index === MOBILE_NAV_TARGET_IDS.length - 1,
-}));
-
-const revealTargetId = MOBILE_NAV_REVEAL_TARGET_ID;
-const targetIds = [...MOBILE_NAV_TARGET_IDS];
+const items = buildMobileNavItems(mobileNavItems);
+const revealTargetId = items[0]?.sectionId ?? '';
+const targetIds = items.map((item) => item.sectionId);
 ---
 
 <nav class="four-fixed-nav" data-four-fixed-nav aria-label="Article sections">
@@ -49,11 +29,6 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
 
 <script define:vars={{ revealTargetId, targetIds }}>
   const ANCHOR_OFFSET = 55;
-  const REVEAL_BUFFER = 8;
-
-  function getRevealOffset(nav) {
-    return Math.max(ANCHOR_OFFSET, nav.offsetHeight || 48) + REVEAL_BUFFER;
-  }
 
   function setActiveLink(nav, activeId) {
     nav.querySelectorAll('a[data-section-id]').forEach((link) => {
@@ -104,10 +79,8 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
       const revealTarget = document.getElementById(revealTargetId);
       const scrollTop = window.scrollY;
 
-      // Show slightly before #sec2 reaches the viewport top so click-scroll
-      // offsets do not hide the bar on the first item.
       const visible = revealTarget
-        ? revealTarget.getBoundingClientRect().top <= getRevealOffset(nav)
+        ? revealTarget.getBoundingClientRect().top <= 0
         : false;
       nav.classList.toggle('active', visible);
 

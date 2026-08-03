@@ -2,8 +2,16 @@
 import { storyblokEditable } from '@storyblok/astro';
 
 const { blok } = Astro.props;
+
+const sectionId = blok.section_id?.trim();
+const label = blok.nav_label ?? blok.label;
 ---
 
-<span {...storyblokEditable(blok)} hidden aria-hidden="true">
-  {blok.nav_label ?? blok.label}
+<span
+  {...storyblokEditable(blok)}
+  hidden
+  aria-hidden="true"
+  data-section-id={sectionId || undefined}
+>
+  {label}
 </span>
