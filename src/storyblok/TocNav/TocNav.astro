@@ -5,5 +5,5 @@ import TocSidebar from './TocSidebar.astro';
 const { blok } = Astro.props;
 ---
 
-<FourFixedMobileNav />
+<FourFixedMobileNav mobileNavItems={blok.mobile_nav_items} />
 <TocSidebar blok={blok} />

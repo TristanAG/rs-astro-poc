@@ -1,0 +1,9 @@
+---
+import { storyblokEditable } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+---
+
+<span {...storyblokEditable(blok)} hidden aria-hidden="true">
+  {blok.nav_label ?? blok.label}
+</span>

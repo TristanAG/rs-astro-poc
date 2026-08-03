@@ -1,3 +1,5 @@
+import type { SbBlokData } from '@storyblok/astro';
+
 export const MOBILE_NAV_TARGET_IDS = ['sec2', 'sec3', 'sec5', 'sec6'] as const;
 
 /** Nav reveals when this section reaches the viewport top. */
@@ -14,4 +16,10 @@ export type MobileNavTargetId = (typeof MOBILE_NAV_TARGET_IDS)[number];
 
 export interface MobileNavField {
   label: string;
+}
+
+export function normalizeMobileNavItems(items: SbBlokData[] = []): MobileNavField[] {
+  return items.map((item) => ({
+    label: String(item.nav_label ?? item.label ?? '').trim(),
+  }));
 }

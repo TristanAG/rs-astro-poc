@@ -88,7 +88,7 @@ const { leadingContentBlocks, reviewBlocks, trailingContentBlocks } =
       (hasToc && tocBlock ? (
         <section class="main-container padding-top-30" id="content_main">
           <div class="container">
-            <FourFixedMobileNav />
+            <FourFixedMobileNav mobileNavItems={tocBlock.mobile_nav_items} />
 
             <div class="sub-container">
               <TocSidebar blok={tocBlock} />

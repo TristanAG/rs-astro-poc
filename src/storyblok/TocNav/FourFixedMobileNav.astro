@@ -1,24 +1,23 @@
 ---
+import type { SbBlokData } from '@storyblok/astro';
 import {
   MOBILE_NAV_DEFAULT_LABELS,
   MOBILE_NAV_REVEAL_TARGET_ID,
   MOBILE_NAV_TARGET_IDS,
-  type MobileNavField,
+  normalizeMobileNavItems,
 } from './mobileNavTargets';
 
 interface Props {
-  /**
-   * Eventually pass:
-   * blok.mobile_nav_item
-   *
-   * Keep dummy data until the Storyblok fields exist.
-   */
-  mobileNavItems?: MobileNavField[];
+  mobileNavItems?: SbBlokData[];
 }
 
-const {
-  mobileNavItems = MOBILE_NAV_DEFAULT_LABELS.map((label) => ({ label })),
-} = Astro.props;
+const { mobileNavItems = [] } = Astro.props;
+
+const normalizedItems = normalizeMobileNavItems(mobileNavItems);
+const mobileNavLabels =
+  normalizedItems.length > 0
+    ? normalizedItems
+    : MOBILE_NAV_DEFAULT_LABELS.map((label) => ({ label }));
 
 /**
  * These IDs are intentionally controlled by the application.
@@ -26,7 +25,7 @@ const {
  */
 const items = MOBILE_NAV_TARGET_IDS.map((sectionId, index) => ({
   sectionId,
-  label: mobileNavItems[index]?.label ?? `Section ${index + 1}`,
+  label: mobileNavLabels[index]?.label || `Section ${index + 1}`,
   emphasized: index === MOBILE_NAV_TARGET_IDS.length - 1,
 }));
 
@@ -49,6 +48,13 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
 </nav>
 
 <script define:vars={{ revealTargetId, targetIds }}>
+  const ANCHOR_OFFSET = 55;
+  const REVEAL_BUFFER = 8;
+
+  function getRevealOffset(nav) {
+    return Math.max(ANCHOR_OFFSET, nav.offsetHeight || 48) + REVEAL_BUFFER;
+  }
+
   function setActiveLink(nav, activeId) {
     nav.querySelectorAll('a[data-section-id]').forEach((link) => {
       const active = link.dataset.sectionId === activeId;
@@ -71,6 +77,24 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
       .filter((section) => section !== null);
   }
 
+  function getScrollOffset(nav) {
+    if (nav.classList.contains('active')) {
+      return nav.offsetHeight || 48;
+    }
+
+    return ANCHOR_OFFSET;
+  }
+
+  function scrollToSection(link, nav) {
+    const sectionId = link.dataset.sectionId || link.hash.slice(1);
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+
+    const top = window.scrollY + target.getBoundingClientRect().top - getScrollOffset(nav);
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    window.scrollTo({ top, behavior });
+  }
+
   function initializeFourFixedNav(nav) {
     let framePending = false;
 
@@ -80,8 +104,11 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
       const revealTarget = document.getElementById(revealTargetId);
       const scrollTop = window.scrollY;
 
-      // Show once #sec2 reaches the viewport top.
-      const visible = revealTarget ? revealTarget.getBoundingClientRect().top <= 0 : false;
+      // Show slightly before #sec2 reaches the viewport top so click-scroll
+      // offsets do not hide the bar on the first item.
+      const visible = revealTarget
+        ? revealTarget.getBoundingClientRect().top <= getRevealOffset(nav)
+        : false;
       nav.classList.toggle('active', visible);
 
       if (!visible) {
@@ -95,7 +122,7 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
         return;
       }
 
-      const activationLine = scrollTop + (nav.offsetHeight || 60) + 8;
+      const activationLine = scrollTop + (nav.offsetHeight || 48) + 8;
 
       let activeId = sections[0].id;
       for (const section of sections) {
@@ -120,6 +147,15 @@ const targetIds = [...MOBILE_NAV_TARGET_IDS];
       nav.dataset.initialized = 'true';
       window.addEventListener('scroll', requestUpdate, { passive: true });
       window.addEventListener('resize', requestUpdate);
+
+      nav.querySelectorAll('a[data-section-id]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          scrollToSection(link, nav);
+          setActiveLink(nav, link.dataset.sectionId ?? null);
+          requestUpdate();
+        });
+      });
     }
 
     updateNav();
