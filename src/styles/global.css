@@ -201,50 +201,82 @@ h3 {
   margin: 20px auto 0;
 }
 
+#sec2,
+#sec3,
+#sec5,
+#sec6 {
+  scroll-margin-top: 60px;
+}
+
 .four-fixed-nav {
-  display: none;
   position: fixed;
-  width: 100%;
-  z-index: 15;
+  z-index: 1000;
   top: 0;
+  right: 0;
   left: 0;
-  background: #fff;
-  border-bottom: 2px solid #acacac;
+  display: none;
+  width: 100%;
+  border-top: 1px solid #d6d6d6;
+  border-bottom: 1px solid #d6d6d6;
 }
 
 .four-fixed-nav ul {
   display: flex;
-  list-style: none;
   margin: 0;
   padding: 0;
-  max-width: 987px;
-  margin-inline: auto;
+  list-style: none;
 }
 
-.four-fixed-nav ul li {
-  flex: 1 1 0;
-  text-align: center;
-  border-right: 1px solid #acacac;
+.four-fixed-nav li {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 24%;
+  box-sizing: border-box;
+  padding: 5px 0;
+  background: #ebebeb;
+  border-right: 1px solid #fff;
 }
 
-.four-fixed-nav ul li:last-child {
-  border-right: none;
+.four-fixed-nav li:last-child {
+  width: 28%;
+  border-right: 0;
 }
 
-.four-fixed-nav ul li a {
-  display: block;
-  padding: 10px 6px;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #0927bd;
-  text-decoration: none;
-  text-transform: uppercase;
+.four-fixed-nav li.emphasized {
+  background: #ff3333;
 }
 
-.four-fixed-nav ul li.active a {
+.four-fixed-nav a {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 4px;
   color: #000;
-  text-decoration: underline;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.5px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.four-fixed-nav li.emphasized a {
+  color: #fff;
+}
+
+.four-fixed-nav li.active,
+.four-fixed-nav li:hover {
+  background: #fff;
+}
+
+.four-fixed-nav li.active a,
+.four-fixed-nav li.emphasized.active a,
+.four-fixed-nav li.emphasized:hover a {
+  color: #000;
 }
 
 @media (max-width: 999px) {
@@ -281,20 +313,21 @@ h3 {
 @media (max-width: 767px) {
   .toc {
     position: relative;
+    display: none;
   }
 
   .toc ul li {
     display: block;
     padding: 0;
   }
-}
-
-@media (max-width: 639px) {
-  .toc {
-    display: none;
-  }
 
   .four-fixed-nav.active {
     display: block;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .four-fixed-nav {
+    display: none !important;
   }
 }

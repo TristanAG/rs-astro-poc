@@ -1,0 +1,134 @@
+---
+import {
+  MOBILE_NAV_DEFAULT_LABELS,
+  MOBILE_NAV_REVEAL_TARGET_ID,
+  MOBILE_NAV_TARGET_IDS,
+  type MobileNavField,
+} from './mobileNavTargets';
+
+interface Props {
+  /**
+   * Eventually pass:
+   * blok.mobile_nav_item
+   *
+   * Keep dummy data until the Storyblok fields exist.
+   */
+  mobileNavItems?: MobileNavField[];
+}
+
+const {
+  mobileNavItems = MOBILE_NAV_DEFAULT_LABELS.map((label) => ({ label })),
+} = Astro.props;
+
+/**
+ * These IDs are intentionally controlled by the application.
+ * Do not make them editable Storyblok fields.
+ */
+const items = MOBILE_NAV_TARGET_IDS.map((sectionId, index) => ({
+  sectionId,
+  label: mobileNavItems[index]?.label ?? `Section ${index + 1}`,
+  emphasized: index === MOBILE_NAV_TARGET_IDS.length - 1,
+}));
+
+const revealTargetId = MOBILE_NAV_REVEAL_TARGET_ID;
+const targetIds = [...MOBILE_NAV_TARGET_IDS];
+---
+
+<nav class="four-fixed-nav" data-four-fixed-nav aria-label="Article sections">
+  <ul>
+    {
+      items.map((item) => (
+        <li class:list={{ emphasized: item.emphasized }}>
+          <a href={`#${item.sectionId}`} data-section-id={item.sectionId}>
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script define:vars={{ revealTargetId, targetIds }}>
+  function setActiveLink(nav, activeId) {
+    nav.querySelectorAll('a[data-section-id]').forEach((link) => {
+      const active = link.dataset.sectionId === activeId;
+      link.parentElement?.classList.toggle('active', active);
+      if (active) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function getSections(nav) {
+    return targetIds
+      .map((id) => {
+        const element = document.getElementById(id);
+        const link = nav.querySelector(`a[data-section-id="${id}"]`);
+        return element && link ? { id, element, link } : null;
+      })
+      .filter((section) => section !== null);
+  }
+
+  function initializeFourFixedNav(nav) {
+    let framePending = false;
+
+    function updateNav() {
+      framePending = false;
+
+      const revealTarget = document.getElementById(revealTargetId);
+      const scrollTop = window.scrollY;
+
+      // Show once #sec2 reaches the viewport top.
+      const visible = revealTarget ? revealTarget.getBoundingClientRect().top <= 0 : false;
+      nav.classList.toggle('active', visible);
+
+      if (!visible) {
+        setActiveLink(nav, null);
+        return;
+      }
+
+      const sections = getSections(nav);
+      if (sections.length === 0) {
+        setActiveLink(nav, null);
+        return;
+      }
+
+      const activationLine = scrollTop + (nav.offsetHeight || 60) + 8;
+
+      let activeId = sections[0].id;
+      for (const section of sections) {
+        const sectionTop = section.element.getBoundingClientRect().top + scrollTop;
+        if (sectionTop <= activationLine) {
+          activeId = section.id;
+        } else {
+          break;
+        }
+      }
+
+      setActiveLink(nav, activeId);
+    }
+
+    function requestUpdate() {
+      if (framePending) return;
+      framePending = true;
+      window.requestAnimationFrame(updateNav);
+    }
+
+    if (nav.dataset.initialized !== 'true') {
+      nav.dataset.initialized = 'true';
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate);
+    }
+
+    updateNav();
+  }
+
+  function initializeAllFourFixedNavs() {
+    document.querySelectorAll('[data-four-fixed-nav]').forEach(initializeFourFixedNav);
+  }
+
+  initializeAllFourFixedNavs();
+  document.addEventListener('astro:page-load', initializeAllFourFixedNavs);
+</script>

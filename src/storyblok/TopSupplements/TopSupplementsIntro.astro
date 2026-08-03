@@ -6,14 +6,14 @@ const copy = renderRichText(blok.copy);
 const top_5_image = blok.top_5_image;
 ---
 
-<section id="sec6"
+<section
   {...storyblokEditable(blok)}
   class:list={[
     'top-supplements-intro',
     blok.section_id && 'target',
     blok.mobile_nav_target && 'mobmenu_target',
   ]}
-  id={blok.section_id?.trim() || undefined}
+  id="sec6"
 >
   {top_5_image?.filename && (
     <img

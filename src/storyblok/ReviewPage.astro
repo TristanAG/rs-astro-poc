@@ -1,8 +1,8 @@
 ---
 import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import FourFixedMobileNav from './TocNav/FourFixedMobileNav.astro';
 import TocScrollSpy from './TocNav/TocScrollSpy.astro';
-import TocMobileNav from './TocNav/TocMobileNav.astro';
 import TocSidebar from './TocNav/TocSidebar.astro';
 
 const { blok } = Astro.props;
@@ -88,7 +88,7 @@ const { leadingContentBlocks, reviewBlocks, trailingContentBlocks } =
       (hasToc && tocBlock ? (
         <section class="main-container padding-top-30" id="content_main">
           <div class="container">
-            <TocMobileNav blok={tocBlock} />
+            <FourFixedMobileNav />
 
             <div class="sub-container">
               <TocSidebar blok={tocBlock} />

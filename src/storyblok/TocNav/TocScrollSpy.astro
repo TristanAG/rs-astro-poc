@@ -23,13 +23,7 @@
 
     const tocLinks = Array.from(tocNav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
     const targets = getTocSectionTargets(tocLinks);
-    const contentTargets = Array.from(
-      document.querySelectorAll<HTMLElement>('#content_main .left-contents .target'),
-    );
-    const mobileNav = document.querySelector<HTMLElement>('[data-toc-mobile-nav]');
-    const mobileTargets = Array.from(document.querySelectorAll<HTMLElement>('.mobmenu_target'));
     const scrollSpyOffset = getScrollSpyOffset();
-    const scrollTop = window.scrollY;
 
     let activeId = tocLinks[0]?.dataset.tocLink ?? '';
     targets.forEach((target) => {
@@ -44,31 +38,6 @@
       if (isActive) link.setAttribute('aria-current', 'true');
       else link.removeAttribute('aria-current');
     });
-
-    if (mobileNav) {
-      const firstTarget = contentTargets[0];
-      const introParagraphs = firstTarget?.querySelectorAll('p') ?? [];
-      const triggerParagraph = introParagraphs[2];
-
-      if (triggerParagraph) {
-        const triggerTop = window.scrollY + triggerParagraph.getBoundingClientRect().top - 50;
-        mobileNav.classList.toggle('active', scrollTop >= triggerTop);
-      }
-
-      let mobileActiveId = contentTargets[0]?.id ?? '';
-      mobileTargets.forEach((target) => {
-        const top = window.scrollY + target.getBoundingClientRect().top;
-        if (scrollTop >= top - ANCHOR_OFFSET) {
-          mobileActiveId = target.id;
-        }
-      });
-
-      mobileNav.querySelectorAll('li').forEach((item) => {
-        const link = item.querySelector('a');
-        const isActive = link?.getAttribute('href') === `#${mobileActiveId}`;
-        item.classList.toggle('active', isActive);
-      });
-    }
   }
 
   function scrollToSection(link: HTMLAnchorElement) {
@@ -98,18 +67,6 @@
         });
         link.classList.add('active');
         link.setAttribute('aria-current', 'true');
-      });
-    });
-
-    document.querySelectorAll<HTMLAnchorElement>('[data-toc-mobile-nav] a[href^="#"]').forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        const target = document.getElementById(link.hash.slice(1));
-        if (!target) return;
-
-        const top = window.scrollY + target.getBoundingClientRect().top - ANCHOR_OFFSET;
-        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-        window.scrollTo({ top, behavior });
       });
     });
 
