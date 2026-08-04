@@ -82,10 +82,9 @@ const cons = blok.cons ?? [];
 const prosSplitIndex = Math.ceil(pros.length / 2);
 const prosLeft = pros.slice(0, prosSplitIndex);
 const prosRight = pros.slice(prosSplitIndex);
-const useTwoColumnCons = cons.length > 4;
 const consSplitIndex = Math.ceil(cons.length / 2);
-const consLeft = useTwoColumnCons ? cons.slice(0, consSplitIndex) : [];
-const consRight = useTwoColumnCons ? cons.slice(consSplitIndex) : [];
+const consLeft = cons.slice(0, consSplitIndex);
+const consRight = cons.slice(consSplitIndex);
 const remarks = blok.remarks || blok.disclaimer || '';
 const showChoose = why_we_chose_it || remarks || productUrl;
 ---
@@ -187,7 +186,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     {cons.length > 0 && (
       <div class="cons">
         <h5>CONS</h5>
-        {useTwoColumnCons ? (
+        {consRight.length > 0 ? (
           <>
             <div class="left">
               <ul>
@@ -206,11 +205,13 @@ const showChoose = why_we_chose_it || remarks || productUrl;
             <div class="clearfix"></div>
           </>
         ) : (
-          <ul>
-            {cons.map((item: any) => (
-              <StoryblokComponent blok={item} />
-            ))}
-          </ul>
+          <div class="full-width-div">
+            <ul>
+              {consLeft.map((item: any) => (
+                <StoryblokComponent blok={item} />
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     )}
