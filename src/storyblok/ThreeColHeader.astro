@@ -90,13 +90,10 @@ const columns = [
   @media (max-width: 767px) {
     .three-col-header-grid {
       width: 100%;
-      height: auto;
       padding: 0 10px;
     }
 
     .three-col-header-item {
-      height: auto;
-      aspect-ratio: 210 / 140;
       padding: 0.35rem 0.25rem;
     }
 
@@ -105,24 +102,11 @@ const columns = [
     }
 
     .three-col-header-text {
+      width: 100%;
+      max-width: 100%;
       font-size: 12px;
       line-height: 18px;
       letter-spacing: -0.5px;
-    }
-  }
-
-  @media (max-width: 415px) {
-    .three-col-header-item {
-      aspect-ratio: auto;
-      height: auto;
-      overflow: visible;
-    }
-
-    .three-col-header-image {
-      width: 50px;
-      max-width: 50px;
-      height: auto;
-      max-height: none;
     }
   }
 </style>
