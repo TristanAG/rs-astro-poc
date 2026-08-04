@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import SiteFooter from './SiteFooter.astro';
 
 const { title, settings } = Astro.props;
 const logo = settings?.logo;
@@ -86,9 +87,7 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
       <slot />
     </main>
 
-    <footer class="container container--content">
-      <small>{settings.footer_text}</small>
-    </footer>
+    <SiteFooter />
 
     <script>
       const menu = document.querySelector('.nav-menu');

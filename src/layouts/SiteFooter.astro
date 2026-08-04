@@ -1,0 +1,46 @@
+---
+const FOOTER_LINKS = [
+  { label: 'About Us', href: '/about-us/' },
+  { label: 'Privacy Policy', href: '/privacy-policy/' },
+  { label: 'Terms & Conditions', href: '/terms-conditions/' },
+  { label: 'Contact Us', href: '/contact-us/' },
+  { label: 'Disclosure', href: '/disclosure/' },
+];
+
+const DISCLAIMER_TEXT =
+  'The information on this site is not intended or implied to be a substitute for professional medical advice, diagnosis or treatment. All content, including text, graphics, images and information, contained on or available through this web site is for general information purposes only.';
+
+function getCopyrightEndYear() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const rolloverDate = new Date(year, 11, 18); // ~14 days before Jan 1
+  return now >= rolloverDate ? year + 1 : year;
+}
+
+const copyrightEndYear = getCopyrightEndYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-main">
+    <nav class="footer-nav" aria-label="Footer">
+      <ul id="menu-footer-nav" class="menu inBlock">
+        {
+          FOOTER_LINKS.map(({ label, href }) => (
+            <li>
+              <a href={href}>{label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <p class="footer-copyright inBlock">&copy; Copyright 2019 - {copyrightEndYear}</p>
+  </div>
+</footer>
+
+<style>
+  #menu-footer-nav li a {
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #000;
+  }
+</style>
