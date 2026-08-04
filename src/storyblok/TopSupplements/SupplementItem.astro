@@ -86,7 +86,7 @@ const consSplitIndex = Math.ceil(cons.length / 2);
 const consLeft = cons.slice(0, consSplitIndex);
 const consRight = cons.slice(consSplitIndex);
 const remarks = blok.remarks || blok.disclaimer || '';
-const showChoose = why_we_chose_it || remarks || productUrl;
+const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || productUrl;
 ---
 
 <article {...storyblokEditable(blok)} class="supplement-item">
@@ -221,6 +221,9 @@ const showChoose = why_we_chose_it || remarks || productUrl;
         <h5>Why We Chose It</h5>
         {why_we_chose_it && (
           <div class="choose-copy" set:html={why_we_chose_it} />
+        )}
+        {blok.supplement_subtext && (
+          <small class="supplement-subtext">{blok.supplement_subtext}</small>
         )}
         {remarks && <p class="remarks">{remarks}</p>}
         {productUrl && (
@@ -515,6 +518,16 @@ const showChoose = why_we_chose_it || remarks || productUrl;
     font-weight: 700;
   }
 
+  .supplement-item-details .choose .supplement-subtext {
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: calc(19px * 0.85);
+    line-height: 26px;
+    color: #000;
+    margin: 0 0 35px;
+  }
+
   .supplement-item-details .choose p.remarks {
     margin-top: -9px;
     margin-bottom: 37px;
@@ -632,6 +645,12 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 
     .supplement-item-details .choose-copy :global(strong) {
       font-weight: 600;
+    }
+
+    .supplement-item-details .choose .supplement-subtext {
+      margin-bottom: 16px;
+      font-size: calc(18px * 0.85);
+      line-height: 22px;
     }
 
     .supplement-item-details .choose {
@@ -817,7 +836,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
       padding: 0;
       color: #000;
       background: transparent;
-      text-align: right;
+      text-align: left;
     }
 
     .mobile-rating-track {
