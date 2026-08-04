@@ -3,20 +3,21 @@ import { storyblokEditable } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 
 const { blok } = Astro.props;
+
+const hasCompositeTitle = blok.title_before || blok.title_highlight || blok.title_after;
+const titleId = blok.title_id?.trim() || undefined;
 ---
 
-<section
-  {...storyblokEditable(blok)}
-  class:list={['avoid-section', blok.section_id && 'target', blok.mobile_nav_target && 'mobmenu_target']}
-  id={blok.section_id?.trim() || undefined}
->
+<section {...storyblokEditable(blok)} class="avoid-section">
   {blok.title && <h2>{blok.title}</h2>}
 
-  <h2>
-    {blok.title_before}
-    &nbsp;<span class="red">{blok.title_highlight}</span>&nbsp;
-    {blok.title_after}
-  </h2>
+  {hasCompositeTitle && (
+    <h2 id={titleId} class:list={[titleId && 'target']}>
+      {blok.title_before}
+      &nbsp;<span class="red">{blok.title_highlight}</span>&nbsp;
+      {blok.title_after}
+    </h2>
+  )}
 
   <div>
     {blok.items?.map((item) => (

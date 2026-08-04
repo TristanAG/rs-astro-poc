@@ -6,16 +6,17 @@ const { blok } = Astro.props;
 const copy = renderRichText(blok.copy);
 const timelineId = `top-ingredients-${blok._uid}`;
 const items: SbBlokData[] = blok.items ?? [];
+const titleId = blok.title_id?.trim() || undefined;
 ---
 
 <section
   {...storyblokEditable(blok)}
   class:list={[
     'top-ingredients-section',
-    blok.section_id && 'target',
+    titleId && 'target',
     blok.mobile_nav_target && 'mobmenu_target',
   ]}
-  id="sec5"
+  id={titleId}
   data-ingredient-timeline
 >
   {blok.title && <h2>{blok.title}</h2>}

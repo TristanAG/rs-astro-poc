@@ -201,11 +201,8 @@ h3 {
   margin: 20px auto 0;
 }
 
-#sec2,
-#sec3,
-#sec5,
-#sec6 {
-  scroll-margin-top: 48px;
+.target {
+  scroll-margin-top: 68px;
 }
 
 .four-fixed-nav {

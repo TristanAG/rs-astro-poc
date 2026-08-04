@@ -1,38 +1,56 @@
 <script>
-  const SCROLL_SPY_OFFSET = 400;
-  const ANCHOR_OFFSET = 55;
+  const ANCHOR_OFFSET = 75;
   const MOBILE_NAV_BREAKPOINT = 639;
 
+  let lockedSectionId: string | null = null;
+
   function getScrollSpyOffset() {
-    return window.innerWidth <= MOBILE_NAV_BREAKPOINT ? ANCHOR_OFFSET : SCROLL_SPY_OFFSET;
+    const fixedNav = document.querySelector<HTMLElement>('[data-four-fixed-nav].active');
+    if (fixedNav) {
+      return fixedNav.offsetHeight + 20;
+    }
+
+    return ANCHOR_OFFSET;
   }
 
-  function getTocSectionTargets(tocLinks: HTMLAnchorElement[]) {
+  function getTocSections(tocLinks: HTMLAnchorElement[]) {
     return tocLinks.flatMap((link) => {
       const id = link.dataset.tocLink;
       if (!id) return [];
 
-      const target = document.getElementById(id);
-      return target ? [target] : [];
+      const element = document.getElementById(id);
+      return element ? [{ id, element, link }] : [];
     });
   }
 
-  function updateTocState() {
-    const tocNav = document.querySelector('[data-toc-nav]');
-    if (!tocNav) return;
+  function getActiveSectionId(sections: { id: string; element: HTMLElement }[]) {
+    if (sections.length === 0) return '';
 
-    const tocLinks = Array.from(tocNav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
-    const targets = getTocSectionTargets(tocLinks);
-    const scrollSpyOffset = getScrollSpyOffset();
+    const activationLine = getScrollSpyOffset();
 
-    let activeId = tocLinks[0]?.dataset.tocLink ?? '';
-    targets.forEach((target) => {
-      if (target.getBoundingClientRect().top <= scrollSpyOffset) {
-        activeId = target.id;
+    for (let index = 0; index < sections.length; index += 1) {
+      const section = sections[index];
+      const top = section.element.getBoundingClientRect().top;
+      const nextTop =
+        index + 1 < sections.length
+          ? sections[index + 1].element.getBoundingClientRect().top
+          : Number.POSITIVE_INFINITY;
+
+      if (top <= activationLine && nextTop > activationLine) {
+        return section.id;
       }
-    });
+    }
 
-    tocLinks.forEach((link) => {
+    const firstTop = sections[0].element.getBoundingClientRect().top;
+    if (firstTop > activationLine) {
+      return sections[0].id;
+    }
+
+    return sections[sections.length - 1].id;
+  }
+
+  function setActiveLink(activeId: string) {
+    document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]').forEach((link) => {
       const isActive = link.dataset.tocLink === activeId;
       link.classList.toggle('active', isActive);
       if (isActive) link.setAttribute('aria-current', 'true');
@@ -40,14 +58,65 @@
     });
   }
 
+  function updateTocState() {
+    const tocNav = document.querySelector('[data-toc-nav]');
+    if (!tocNav) return;
+
+    if (lockedSectionId) {
+      setActiveLink(lockedSectionId);
+      return;
+    }
+
+    const tocLinks = Array.from(tocNav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+    const sections = getTocSections(tocLinks);
+    setActiveLink(getActiveSectionId(sections));
+  }
+
+  function waitForScrollEnd(onComplete: () => void) {
+    let lastScrollY = window.scrollY;
+    let unchangedFrames = 0;
+
+    const check = () => {
+      if (window.scrollY === lastScrollY) {
+        unchangedFrames += 1;
+        if (unchangedFrames >= 3) {
+          onComplete();
+          return;
+        }
+      } else {
+        unchangedFrames = 0;
+        lastScrollY = window.scrollY;
+      }
+
+      requestAnimationFrame(check);
+    };
+
+    requestAnimationFrame(check);
+  }
+
   function scrollToSection(link: HTMLAnchorElement) {
     const sectionId = link.dataset.tocLink || link.hash.slice(1);
     const target = document.getElementById(sectionId);
-    if (!target) return;
+    if (!sectionId || !target) return;
+
+    lockedSectionId = sectionId;
+    setActiveLink(sectionId);
 
     const top = window.scrollY + target.getBoundingClientRect().top - ANCHOR_OFFSET;
     const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
     window.scrollTo({ top, behavior });
+
+    const releaseLock = () => {
+      lockedSectionId = null;
+      updateTocState();
+    };
+
+    if (behavior === 'auto') {
+      releaseLock();
+      return;
+    }
+
+    waitForScrollEnd(releaseLock);
   }
 
   function initializeToc() {
@@ -60,13 +129,6 @@
       link.addEventListener('click', (event) => {
         event.preventDefault();
         scrollToSection(link);
-
-        document.querySelectorAll('[data-toc-link]').forEach((item) => {
-          item.classList.remove('active');
-          item.removeAttribute('aria-current');
-        });
-        link.classList.add('active');
-        link.setAttribute('aria-current', 'true');
       });
     });
 
