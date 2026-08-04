@@ -501,7 +501,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
   .supplement-item-details .choose-copy :global(p) {
     margin: 0 0 35px;
     color: #000;
-    font-size: 19px;
+    font-size: var(--paragraph-font-size, 19px);
     font-weight: 400;
     line-height: 28px;
     letter-spacing: 0;
@@ -624,7 +624,7 @@ const showChoose = why_we_chose_it || remarks || productUrl;
 
     .supplement-item-details .choose-copy :global(p) {
       margin-bottom: 16px;
-      font-size: 18px;
+      font-size: var(--paragraph-font-size-mobile, 18px);
       font-weight: 400;
       letter-spacing: -0.5px;
       line-height: 22px;

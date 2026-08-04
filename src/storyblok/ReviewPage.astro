@@ -66,9 +66,14 @@ const { tocBlock, beforeFullWidth, fullWidthBlocks, afterFullWidth } = partition
 const hasToc = Boolean(tocBlock);
 const { leadingContentBlocks, reviewBlocks, trailingContentBlocks } =
   partitionContainerBlocks(afterFullWidth);
+
+const isLargeParagraphFont = blok.paragraph_font_size === 'large';
 ---
 
-<div {...storyblokEditable(blok)}>
+<div
+  class:list={['review-page', isLargeParagraphFont && 'review-page--paragraph-large']}
+  {...storyblokEditable(blok)}
+>
   {
     beforeFullWidth.length > 0 && (
       <div class="container container--content">
