@@ -124,6 +124,20 @@ const hasAuthorSection =
     margin-bottom: 10px;
   }
 
+  @media (min-width: 1150px) {
+    .page-heading {
+      overflow: visible;
+    }
+
+    .page-heading p.subtext {
+      white-space: nowrap;
+      width: fit-content;
+      max-width: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
   @media (max-width: 767px) {
     .page-heading h1 {
       font-size: 24px;
