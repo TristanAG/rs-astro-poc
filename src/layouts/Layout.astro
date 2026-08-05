@@ -218,8 +218,34 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
 </html>
 
 <style>
-  .container--header {
-    padding-left: 8.3%;
+  @media (max-width: 1200px) {
+    .container--header,
+    .container--nav {
+      padding-left: 8.3%;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .container--header {
+      max-width: 1000px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .site-nav {
+      background-color: transparent;
+      padding-left: 0;
+    }
+
+    .container--nav {
+      max-width: 1000px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #444;
+      box-sizing: border-box;
+    }
   }
 
   .container--content {
@@ -233,7 +259,6 @@ const latestArticlesNavLinks = settings?.latest_article_links ?? [];
     gap: 1.5rem;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
-    padding-left: 8.3%;
   }
 
   .nav-menu {
