@@ -385,6 +385,13 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
     text-align: center;
   }
 
+  @media (max-width: 639px) {
+    .grade-circle {
+      justify-content: flex-start;
+      padding-top: 8px;
+    }
+  }
+
   .grade-value {
     color: #000;
     font-size: 48px;
@@ -587,6 +594,46 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
   }
 
   @media (max-width: 639px) {
+    .supplement-item-product-grade {
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+    }
+
+    .supplement-item-grade {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .supplement-item-image img {
+      display: block;
+      width: auto;
+      max-width: 85px;
+      height: auto;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .grade-circle {
+      width: 100px;
+      height: 100px;
+      background-size: 100%;
+    }
+
+    .grade-value {
+      padding-top: 24px;
+      font-size: 36px;
+      letter-spacing: -0.75px;
+      line-height: 38px;
+    }
+
+    .grade-label {
+      font-size: 8px;
+      letter-spacing: -0.5px;
+      line-height: 10px;
+    }
+
     .supplement-item-details {
       margin-top: 0;
     }
@@ -701,6 +748,7 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
     .supplement-item-card {
       display: flex;
       overflow: visible;
+      box-sizing: border-box;
       flex-direction: column;
       border: 0;
     }
@@ -732,52 +780,50 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
 
     .supplement-item-product-grade {
       display: flex;
-      align-items: stretch;
-      margin-bottom: 10px;
-      border: 2px solid #ccc;
+      align-items: center;
+      width: 100%;
+    }
+
+    .supplement-item-image,
+    .supplement-item-grade,
+    .supplement-item-ratings {
+      grid-column: auto;
+      grid-row: auto;
     }
 
     .supplement-item-image,
     .supplement-item-grade {
-      width: 50%;
+      float: none;
+      flex: 0 0 49%;
+      width: 49%;
+      max-width: 49%;
       box-sizing: border-box;
     }
 
     .supplement-item-image {
-      padding: 12px;
+      margin-bottom: 0;
+      padding: 12px 12px 5px;
       border-right: 1px solid #ccc;
+      text-align: center;
     }
 
     .supplement-item-image img {
-      max-width: 85px;
-      max-height: 180px;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      margin-top: 15px;
     }
 
     .supplement-item-grade {
-      align-items: flex-start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
       padding: 12px 8px;
     }
 
     .grade-circle {
-      width: 128px;
-      height: 128px;
-      margin: 0 auto;
-      background-size: 100%;
-    }
-
-    .grade-value {
-      padding-top: 28px;
-      font-size: 40px;
-      letter-spacing: -0.75px;
-      line-height: 38px;
-      transform: translateY(-6px);
-    }
-
-    .grade-label {
-      font-size: 8px;
-      letter-spacing: -0.5px;
-      line-height: 10px;
-      transform: translateY(-6px);
+      margin: 10px auto 0;
     }
 
     .supplement-item-ratings {
