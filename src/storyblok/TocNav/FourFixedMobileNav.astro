@@ -10,10 +10,14 @@ const { mobileNavItems = [] } = Astro.props;
 
 const items = buildMobileNavItems(mobileNavItems);
 const revealTargetId = items[0]?.sectionId ?? '';
-const targetIds = items.map((item) => item.sectionId);
 ---
 
-<nav class="four-fixed-nav" data-four-fixed-nav aria-label="Article sections">
+<nav
+  class="four-fixed-nav"
+  data-four-fixed-nav
+  data-reveal-target={revealTargetId || undefined}
+  aria-label="Article sections"
+>
   <ul>
     {
       items.map((item) => (
@@ -27,175 +31,16 @@ const targetIds = items.map((item) => item.sectionId);
   </ul>
 </nav>
 
-<script define:vars={{ revealTargetId, targetIds }}>
-  const ANCHOR_OFFSET = 75;
-  const REVEAL_EARLY_OFFSET = 150;
+<script>
+  import { initFixedNavVisibility } from './tocScrollSpy';
 
-  function setActiveLink(nav, activeId) {
-    nav.querySelectorAll('a[data-section-id]').forEach((link) => {
-      const active = link.dataset.sectionId === activeId;
-      link.parentElement?.classList.toggle('active', active);
-      if (active) {
-        link.setAttribute('aria-current', 'location');
-      } else {
-        link.removeAttribute('aria-current');
-      }
-    });
+  function bootFixedNavVisibility() {
+    const nav = document.querySelector<HTMLElement>('[data-four-fixed-nav]');
+    if (!nav) return;
+
+    initFixedNavVisibility(nav.dataset.revealTarget ?? '');
   }
 
-  function getSections(nav) {
-    return targetIds
-      .map((id) => {
-        const element = document.getElementById(id);
-        const link = nav.querySelector(`a[data-section-id="${id}"]`);
-        return element && link ? { id, element, link } : null;
-      })
-      .filter((section) => section !== null);
-  }
-
-  function getScrollOffset(nav) {
-    if (nav.classList.contains('active')) {
-      return (nav.offsetHeight || 48) + 20;
-    }
-
-    return ANCHOR_OFFSET;
-  }
-
-  function getActiveSectionId(sections, nav) {
-    if (sections.length === 0) return null;
-
-    const scrollTop = window.scrollY;
-    const activationLine = scrollTop + getScrollOffset(nav);
-
-    for (let index = 0; index < sections.length; index += 1) {
-      const sectionTop = sections[index].element.getBoundingClientRect().top + scrollTop;
-      const nextTop =
-        index + 1 < sections.length
-          ? sections[index + 1].element.getBoundingClientRect().top + scrollTop
-          : Number.POSITIVE_INFINITY;
-
-      if (sectionTop <= activationLine && nextTop > activationLine) {
-        return sections[index].id;
-      }
-    }
-
-    const firstTop = sections[0].element.getBoundingClientRect().top + scrollTop;
-    if (firstTop > activationLine) {
-      return sections[0].id;
-    }
-
-    return sections[sections.length - 1].id;
-  }
-
-  function waitForScrollEnd(onComplete) {
-    let lastScrollY = window.scrollY;
-    let unchangedFrames = 0;
-
-    const check = () => {
-      if (window.scrollY === lastScrollY) {
-        unchangedFrames += 1;
-        if (unchangedFrames >= 3) {
-          onComplete();
-          return;
-        }
-      } else {
-        unchangedFrames = 0;
-        lastScrollY = window.scrollY;
-      }
-
-      requestAnimationFrame(check);
-    };
-
-    requestAnimationFrame(check);
-  }
-
-  function scrollToSection(link, nav) {
-    const sectionId = link.dataset.sectionId || link.hash.slice(1);
-    const target = document.getElementById(sectionId);
-    if (!target) return;
-
-    const top = window.scrollY + target.getBoundingClientRect().top - getScrollOffset(nav);
-    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-    window.scrollTo({ top, behavior });
-  }
-
-  function initializeFourFixedNav(nav) {
-    let framePending = false;
-    let lockedSectionId = null;
-
-    function updateNav() {
-      framePending = false;
-
-      const revealTarget = document.getElementById(revealTargetId);
-      const scrollTop = window.scrollY;
-
-      const visible = revealTarget
-        ? revealTarget.getBoundingClientRect().top <= REVEAL_EARLY_OFFSET
-        : false;
-      nav.classList.toggle('active', visible);
-
-      if (!visible) {
-        setActiveLink(nav, null);
-        return;
-      }
-
-      const sections = getSections(nav);
-      if (sections.length === 0) {
-        setActiveLink(nav, null);
-        return;
-      }
-
-      if (lockedSectionId) {
-        setActiveLink(nav, lockedSectionId);
-        return;
-      }
-
-      setActiveLink(nav, getActiveSectionId(sections, nav));
-    }
-
-    function requestUpdate() {
-      if (framePending) return;
-      framePending = true;
-      window.requestAnimationFrame(updateNav);
-    }
-
-    if (nav.dataset.initialized !== 'true') {
-      nav.dataset.initialized = 'true';
-      window.addEventListener('scroll', requestUpdate, { passive: true });
-      window.addEventListener('resize', requestUpdate);
-
-      nav.querySelectorAll('a[data-section-id]').forEach((link) => {
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-
-          const sectionId = link.dataset.sectionId ?? null;
-          lockedSectionId = sectionId;
-          setActiveLink(nav, sectionId);
-          scrollToSection(link, nav);
-
-          const releaseLock = () => {
-            lockedSectionId = null;
-            requestUpdate();
-          };
-
-          const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-          if (behavior === 'auto') {
-            releaseLock();
-            return;
-          }
-
-          waitForScrollEnd(releaseLock);
-        });
-      });
-    }
-
-    updateNav();
-  }
-
-  function initializeAllFourFixedNavs() {
-    document.querySelectorAll('[data-four-fixed-nav]').forEach(initializeFourFixedNav);
-  }
-
-  initializeAllFourFixedNavs();
-  document.addEventListener('astro:page-load', initializeAllFourFixedNavs);
+  bootFixedNavVisibility();
+  document.addEventListener('astro:page-load', bootFixedNavVisibility);
 </script>
