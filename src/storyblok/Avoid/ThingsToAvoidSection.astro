@@ -6,16 +6,46 @@ const { blok } = Astro.props;
 
 const hasCompositeTitle = blok.title_before || blok.title_highlight || blok.title_after;
 const titleId = blok.title_id?.trim() || undefined;
+
+const titleFontStyle = {
+  ...(blok.font_size_top_desktop != null && {
+    '--font-size-top-desktop': `${blok.font_size_top_desktop}px`,
+  }),
+  ...(blok.font_size_top_mobile != null && {
+    '--font-size-top-mobile': `${blok.font_size_top_mobile}px`,
+  }),
+  ...(blok.font_size_bottom_desktop != null && {
+    '--font-size-bottom-desktop': `${blok.font_size_bottom_desktop}px`,
+  }),
+  ...(blok.font_size_bottom_mobile != null && {
+    '--font-size-bottom-mobile': `${blok.font_size_bottom_mobile}px`,
+  }),
+};
 ---
 
 <section {...storyblokEditable(blok)} class="avoid-section">
   {blok.title && <h2>{blok.title}</h2>}
 
   {hasCompositeTitle && (
-    <h2 id={titleId} class:list={[titleId && 'target']}>
-      {blok.title_before}
-      &nbsp;<span class="red">{blok.title_highlight}</span>&nbsp;
-      {blok.title_after}
+    <h2
+      id={titleId}
+      class:list={[titleId && 'target', 'composite-title']}
+      style={titleFontStyle}
+    >
+      {(blok.title_before || blok.title_highlight) && (
+        <span class="title-line title-line--top">
+          {blok.title_before}
+          {blok.title_highlight && (
+            <>
+              {blok.title_before && '\u00A0'}
+              <span class="red">{blok.title_highlight}</span>
+            </>
+          )}
+        </span>
+      )}
+      {blok.title_after && (
+        <span class="title-line title-line--bottom">{blok.title_after}</span>
+      )}
     </h2>
   )}
 
@@ -38,10 +68,31 @@ const titleId = blok.title_id?.trim() || undefined;
     h2 {
         position: relative;
         padding-top: 15px;
-        margin: 0 auto 25px;;
-        width: 450px;
-        max-width: 100%;
+        margin: 0 auto 25px;
         font-weight: 500;
+        text-align: center;
+    }
+
+    .composite-title .title-line {
+        display: block;
+    }
+
+    .composite-title .title-line--top {
+        font-size: var(--font-size-top-desktop);
+    }
+
+    .composite-title .title-line--bottom {
+        font-size: var(--font-size-bottom-desktop);
+    }
+
+    @media (max-width: 767px) {
+        .composite-title .title-line--top {
+            font-size: var(--font-size-top-mobile);
+        }
+
+        .composite-title .title-line--bottom {
+            font-size: var(--font-size-bottom-mobile);
+        }
     }
 
     h2::before {

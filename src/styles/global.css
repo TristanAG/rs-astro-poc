@@ -337,6 +337,10 @@ h3 {
     display: block;
     height: 60px;
   }
+
+  .four-fixed-nav.active a {
+    word-wrap: normal;
+  }
 }
 
 @media screen and (min-width: 768px) {
