@@ -15,7 +15,7 @@ const hasEditorsNote = Boolean(blok.editors_note_highlighted_text || blok.editor
   data-ingredient-article
 >
   <div class="ingredient-item-text">
-    {blok.title && <strong class="ingredient-title">{blok.title}</strong>}
+    {blok.title && <h3 class="red">{blok.title}</h3>}
     {blok.copy && <div class="ingredient-copy" set:html={copy} />}
     {hasEditorsNote && (
       <div
@@ -52,7 +52,7 @@ const hasEditorsNote = Boolean(blok.editors_note_highlighted_text || blok.editor
     color: #000;
   }
 
-  .ingredient-title {
+  h3.red {
     display: block;
     font-family: 'poppins', sans-serif;
     font-weight: 400;
@@ -60,6 +60,32 @@ const hasEditorsNote = Boolean(blok.editors_note_highlighted_text || blok.editor
     font-size: 26px;
     line-height: 26px;
     text-align: left;
+    color: #000;
+  }
+
+  @media (max-width: 767px) {
+    h3.red {
+      font-size: 22px;
+      line-height: 26px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    h3.red {
+      font-size: 21px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    h3.red {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 340px) {
+    h3.red {
+      font-size: 17px;
+    }
   }
 
   .ingredient-copy :global(p),
@@ -86,7 +112,7 @@ const hasEditorsNote = Boolean(blok.editors_note_highlighted_text || blok.editor
     margin-top: 26px;
   }
 
-  .ingredient-title + .editors-note-section {
+  h3.red + .editors-note-section {
     margin-top: 0.5rem;
   }
 
