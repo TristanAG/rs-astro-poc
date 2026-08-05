@@ -1,8 +1,15 @@
 ---
-const FOOTER_LINKS = [
+type FooterLink = {
+  label: string;
+  href: string;
+  osano?: boolean;
+};
+
+const FOOTER_LINKS: FooterLink[] = [
   { label: 'About Us', href: '/about-us/' },
   { label: 'Privacy Policy', href: '/privacy-policy/' },
   { label: 'Terms & Conditions', href: '/terms-conditions/' },
+  { label: 'Cookie Preferences', href: '#', osano: true },
   { label: 'Contact Us', href: '/contact-us/' },
   { label: 'Disclosure', href: '/disclosure/' },
 ];
@@ -25,9 +32,14 @@ const copyrightEndYear = getCopyrightEndYear();
     <nav class="footer-nav" aria-label="Footer">
       <ul id="menu-footer-nav" class="menu inBlock">
         {
-          FOOTER_LINKS.map(({ label, href }) => (
+          FOOTER_LINKS.map(({ label, href, osano }) => (
             <li>
-              <a href={href}>{label}</a>
+              <a
+                href={href}
+                class={osano ? 'osano-cookie-preference-link' : undefined}
+              >
+                {label}
+              </a>
             </li>
           ))
         }
@@ -35,12 +47,21 @@ const copyrightEndYear = getCopyrightEndYear();
     </nav>
     <p class="footer-copyright inBlock">&copy; Copyright 2019 - {copyrightEndYear}</p>
   </div>
+  <div class="footer_disclaimer">
+    <div class="disclaimer">
+      <p>{DISCLAIMER_TEXT}</p>
+    </div>
+  </div>
 </footer>
 
-<style>
-  #menu-footer-nav li a {
-    font-size: 14px;
-    line-height: 1.42857143;
-    color: #000;
-  }
-</style>
+<script>
+  document.querySelectorAll('.osano-cookie-preference-link').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const osano = (window as Window & { Osano?: { cm?: { showDrawer?: (id?: string) => void } } }).Osano;
+      if (osano?.cm?.showDrawer) {
+        osano.cm.showDrawer('osano-cm-dom-info-dialog-open');
+      }
+    });
+  });
+</script>

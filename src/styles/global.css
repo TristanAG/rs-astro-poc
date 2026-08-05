@@ -411,26 +411,83 @@ footer.site-footer .footer-copyright {
   line-height: 1.42857143;
 }
 
+footer.site-footer #menu-footer-nav li a {
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #000;
+}
+
+footer.site-footer .footer_disclaimer {
+  background: #f1f1f1;
+  border-top: 1px solid #dbdbdb;
+  padding: 10px 0 15px;
+  color: #000;
+  font-size: 14px;
+  line-height: 15px;
+}
+
+footer.site-footer .footer_disclaimer .disclaimer {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1170px;
+  padding: 0 0.5rem;
+}
+
+footer.site-footer .footer_disclaimer p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 13px;
+}
+
+/* Hide Osano floating widget — footer link opens the drawer */
+.osano-cm-widget {
+  display: none;
+}
+
 @media (max-width: 767px) {
-  footer.site-footer .footer-nav {
-    justify-content: flex-start;
+  footer.site-footer .footer-main {
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
+  footer.site-footer .footer-nav .menu,
   footer.site-footer #menu-footer-nav {
     display: block;
     width: 100%;
+    padding: 0;
+    margin: 0 auto;
+    overflow: hidden;
   }
 
-  footer.site-footer .footer-nav ul li {
+  footer.site-footer #menu-footer-nav li {
     float: left;
     width: 49%;
+    margin: 2px 0;
+    padding-left: 0;
     text-align: left;
-    font-size: 13px;
+    display: block;
   }
 
-  footer.site-footer .footer-nav ul::after {
-    content: '';
-    display: table;
-    clear: both;
+  footer.site-footer #menu-footer-nav li:nth-child(odd) {
+    padding-right: 2%;
+  }
+
+  footer.site-footer #menu-footer-nav li a {
+    font-size: 13px;
+    display: inline-block;
+  }
+
+  footer.site-footer .footer-copyright,
+  footer.site-footer p.inBlock {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 639px) {
+  footer.site-footer #menu-footer-nav {
+    padding-bottom: 2px;
   }
 }
