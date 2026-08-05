@@ -30,8 +30,9 @@ const items: SbBlokData[] = blok.citations ?? blok.citation_item ?? [];
 
   .citations :global(li) {
     counter-increment: citation;
-    position: relative;
-    padding-left: .9rem;
+    display: grid;
+    grid-template-columns: 2em 1fr;
+    column-gap: 0.4em;
     font-size: 14px;
     line-height: 2;
     letter-spacing: -1px;
@@ -41,8 +42,8 @@ const items: SbBlokData[] = blok.citations ?? blok.citation_item ?? [];
 
   .citations :global(li::before) {
     content: counter(citation) '.';
-    position: absolute;
-    left: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
     font-size: 14px;
     line-height: 2;
     letter-spacing: -1px;
