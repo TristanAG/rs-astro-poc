@@ -6,6 +6,23 @@ const { blok } = Astro.props;
 const image = blok.image;
 const DEFAULT_TITLE_WEIGHT = 500;
 const titleWeight = blok.title_weight || DEFAULT_TITLE_WEIGHT;
+const imageWidthValue = blok.image_width?.toString().trim();
+const parsedImageWidth = Number(imageWidthValue);
+const imageWidthStyle =
+  imageWidthValue &&
+  Number.isFinite(parsedImageWidth) &&
+  parsedImageWidth > 0
+    ? `width: ${parsedImageWidth}px`
+    : undefined;
+const imageHeightValue = blok.image_height?.toString().trim();
+const parsedImageHeight = Number(imageHeightValue);
+const imageHeightStyle =
+  imageHeightValue &&
+  Number.isFinite(parsedImageHeight) &&
+  parsedImageHeight > 0
+    ? `height: ${parsedImageHeight}px`
+    : undefined;
+const imageStyle = [imageWidthStyle, imageHeightStyle].filter(Boolean).join('; ') || undefined;
 ---
 
 <article {...storyblokEditable(blok)} class="supplement-guide-item">
@@ -15,6 +32,7 @@ const titleWeight = blok.title_weight || DEFAULT_TITLE_WEIGHT;
         class="supplement-guide-item-image"
         src={image.filename}
         alt={image.alt || blok.title || ''}
+        style={imageStyle}
       />
     )}
     {blok.title && (
@@ -61,8 +79,7 @@ const titleWeight = blok.title_weight || DEFAULT_TITLE_WEIGHT;
   .supplement-guide-item-image {
     flex: 0 0 auto;
     margin-right: 15px;
-    width: 150px;
-    height: 110px;
+    height: auto;
     padding: 6px 8px 10px 6px;
   }
 
