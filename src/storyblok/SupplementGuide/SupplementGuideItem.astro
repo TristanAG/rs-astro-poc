@@ -4,6 +4,8 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 
 const { blok } = Astro.props;
 const image = blok.image;
+const DEFAULT_TITLE_WEIGHT = 500;
+const titleWeight = blok.title_weight || DEFAULT_TITLE_WEIGHT;
 ---
 
 <article {...storyblokEditable(blok)} class="supplement-guide-item">
@@ -16,7 +18,10 @@ const image = blok.image;
       />
     )}
     {blok.title && (
-      <h4 class="supplement-guide-item-title">
+      <h4
+        class="supplement-guide-item-title"
+        style={`font-weight: ${titleWeight}`}
+      >
         {blok.title_underline ? <u>{blok.title}</u> : blok.title}
       </h4>
     )}
@@ -34,11 +39,18 @@ const image = blok.image;
 <style>
   .supplement-guide-item {
     margin: 0 0 0px;
+    padding: 0;
     box-shadow: none;
+    display: flex;
+    flex-direction: column;
   }
 
   .supplement-guide-item:last-child {
     margin-bottom: 0;
+  }
+
+  .supplement-guide-item:not(:has(.supplement-guide-item-image)) {
+    gap: 25px;
   }
 
   .supplement-guide-item-header {
@@ -57,7 +69,6 @@ const image = blok.image;
   .supplement-guide-item-title {
     flex: 1 1 auto;
     margin: 0;
-    font-weight: 700;
     font-size: 26px;
     line-height: 26px;
     color: #000;

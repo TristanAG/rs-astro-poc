@@ -4,6 +4,8 @@ import { storyblokEditable, renderRichText } from '@storyblok/astro';
 const { blok } = Astro.props;
 const content = renderRichText(blok.content);
 const titleId = blok.title_id?.trim() || undefined;
+const DEFAULT_TITLE_SIZE = '26px';
+const titleSize = blok.title_size?.trim() || DEFAULT_TITLE_SIZE;
 ---
 
 <div class="accordion-item" data-accordion-item {...storyblokEditable(blok)}>
@@ -14,6 +16,7 @@ const titleId = blok.title_id?.trim() || undefined;
       type="button"
       data-accordion-trigger
       aria-expanded="false"
+      style={`--accordion-title-size: ${titleSize}`}
     >
       <span class="accordion-title">{blok.title}</span>
       <span class="accordion-arrow" aria-hidden="true"></span>
@@ -39,8 +42,8 @@ const titleId = blok.title_id?.trim() || undefined;
     cursor: pointer;
     font: inherit;
     font-weight: 500;
-    font-size: 26px;
-    line-height: 26px;
+    font-size: var(--accordion-title-size, 26px);
+    line-height: var(--accordion-title-size, 26px);
     color: #000;
     box-shadow: none;
     outline: none;
@@ -116,12 +119,5 @@ const titleId = blok.title_id?.trim() || undefined;
 
   .accordion-panel-inner {
     padding-bottom: 1rem;
-  }
-
-  @media (max-width: 767px) {
-    .accordion-trigger {
-      font-size: 22px;
-      line-height: 26px;
-    }
   }
 </style>

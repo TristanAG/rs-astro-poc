@@ -8,6 +8,8 @@ const description = renderRichText(blok.description);
 const DEFAULT_BORDER_COLOR = '#4135e8';
 const borderColor = blok.border_color || DEFAULT_BORDER_COLOR;
 const showBorder = blok.border === true;
+const hasSecondaryTitleLine = blok.title_highlighted_word && blok.title_line_two;
+const hasTitle = blok.title || hasSecondaryTitleLine;
 ---
 
 <section {...storyblokEditable(blok)} class="supplement-guide-section">
@@ -18,7 +20,18 @@ const showBorder = blok.border === true;
     ]}
     style={showBorder ? `--border-color: ${borderColor}` : undefined}
   >
-    {blok.title && <h3>{blok.title}</h3>}
+    {hasTitle && (
+      <h3>
+        {blok.title && <span class="title-line">{blok.title}</span>}
+        {hasSecondaryTitleLine && (
+          <span class="title-line title-line--secondary">
+            <u class="highlighted-word">{blok.title_highlighted_word}</u>
+            {'\u00A0'}
+            {blok.title_line_two}
+          </span>
+        )}
+      </h3>
+    )}
     {blok.description && <div class="description" set:html={description} />}
 
     <div class="supplement-guide-items">
@@ -42,6 +55,14 @@ const showBorder = blok.border === true;
     color: #000;
     text-align: center;
     margin: 0 0 25px;
+  }
+
+  .title-line {
+    display: block;
+  }
+
+  .highlighted-word {
+    font-weight: 700;
   }
 
   .description {
