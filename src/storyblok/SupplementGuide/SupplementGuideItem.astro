@@ -1,0 +1,65 @@
+---
+import { storyblokEditable, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+const image = blok.image;
+---
+
+<article {...storyblokEditable(blok)} class="supplement-guide-item">
+  <div class="supplement-guide-item-header">
+    {image?.filename && (
+      <img
+        class="supplement-guide-item-image"
+        src={image.filename}
+        alt={image.alt || blok.title || ''}
+      />
+    )}
+    {blok.title && <h4 class="supplement-guide-item-title">{blok.title}</h4>}
+  </div>
+
+  {blok.supplement_guide_item_content?.length > 0 && (
+    <div class="supplement-guide-item-content">
+      {blok.supplement_guide_item_content.map((item: SbBlokData) => (
+        <StoryblokComponent blok={item} />
+      ))}
+    </div>
+  )}
+</article>
+
+<style>
+  .supplement-guide-item {
+    margin: 0 0 25px;
+  }
+
+  .supplement-guide-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .supplement-guide-item-header {
+    margin-bottom: 15px;
+    overflow: hidden;
+  }
+
+  .supplement-guide-item-image {
+    float: left;
+    margin-right: 15px;
+    width: 150px;
+    height: 110px;
+    padding: 6px 8px 10px 6px;
+  }
+
+  .supplement-guide-item-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 26px;
+    color: #000;
+  }
+
+  .supplement-guide-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+</style>

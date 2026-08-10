@@ -1,0 +1,76 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+
+const { blok } = Astro.props;
+const titleHighlightColor = blok.title_highlight_color;
+const copyHtml = renderRichText(blok.copy);
+
+function splitRichTextParagraphs(html: string): { first: string; rest: string } {
+  if (!html) return { first: '', rest: '' };
+
+  const trimmed = html.trim();
+  const firstMatch = trimmed.match(/^<p>([\s\S]*?)<\/p>/i);
+  if (!firstMatch) return { first: trimmed, rest: '' };
+
+  return {
+    first: firstMatch[1],
+    rest: trimmed.slice(firstMatch[0].length).trim(),
+  };
+}
+
+const { first: copyFirst, rest: copyRest } = splitRichTextParagraphs(copyHtml);
+---
+
+<div {...storyblokEditable(blok)} class="supplement-guide-item-content-block">
+  {(blok.title || copyHtml) && (
+    <>
+      <p class="content-body">
+        {blok.title && (
+          <span
+            class="content-title"
+            style={titleHighlightColor ? `background-color: ${titleHighlightColor}` : undefined}
+          >
+            {blok.title}
+          </span>
+        )}
+        {blok.title && copyFirst && <> </>}
+        {copyFirst && <span set:html={copyFirst} />}
+      </p>
+      {copyRest && <div class="content-body-rest" set:html={copyRest} />}
+    </>
+  )}
+</div>
+
+<style>
+  .supplement-guide-item-content-block {
+    margin: 0;
+  }
+
+  .content-body {
+    margin: 0;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 26px;
+    color: #000;
+  }
+
+  .content-title {
+    font-weight: 700;
+  }
+
+  .content-body-rest {
+    margin: 1em 0 0;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 26px;
+    color: #000;
+  }
+
+  .content-body-rest :global(p) {
+    margin: 0 0 1em;
+  }
+
+  .content-body-rest :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

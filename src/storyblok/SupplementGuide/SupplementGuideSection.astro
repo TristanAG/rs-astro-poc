@@ -1,0 +1,62 @@
+---
+import { storyblokEditable, renderRichText, type SbBlokData } from '@storyblok/astro';
+import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+
+const { blok } = Astro.props;
+
+const description = renderRichText(blok.description);
+const DEFAULT_BORDER_COLOR = '#4135e8';
+const borderColor = blok.border_color || DEFAULT_BORDER_COLOR;
+const showBorder = blok.border === true;
+---
+
+<section {...storyblokEditable(blok)} class="supplement-guide-section">
+  <div
+    class:list={[
+      'supplement-guide-inner',
+      showBorder && 'supplement-guide-inner--bordered',
+    ]}
+    style={showBorder ? `--border-color: ${borderColor}` : undefined}
+  >
+    {blok.title && <h3>{blok.title}</h3>}
+    {blok.description && <div class="description" set:html={description} />}
+
+    <div class="supplement-guide-items">
+      {blok.supplement_guide_items?.map((item: SbBlokData) => (
+        <StoryblokComponent blok={item} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .supplement-guide-inner--bordered {
+    padding: 25px 29px 41px;
+    border: 2px solid var(--border-color, #4135e8);
+  }
+
+  h3 {
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 36px;
+    color: #000;
+    text-align: center;
+    margin: 0 0 25px;
+  }
+
+  .description {
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 26px;
+    color: #000;
+    margin-bottom: 25px;
+  }
+
+  .description :global(p) {
+    margin: 0 0 1em;
+  }
+
+  .description :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>
