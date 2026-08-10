@@ -19,22 +19,28 @@ function splitRichTextParagraphs(html: string): { first: string; rest: string } 
 }
 
 const { first: copyFirst, rest: copyRest } = splitRichTextParagraphs(copyHtml);
+const copyInline = copyFirst.replace(/^(\s|&nbsp;|<br\s*\/?>)*/i, '');
+const title = blok.title?.trim();
+const hasTitleHighlight = Boolean(titleHighlightColor);
 ---
 
 <div {...storyblokEditable(blok)} class="supplement-guide-item-content-block">
-  {(blok.title || copyHtml) && (
+  {(title || copyHtml) && (
     <>
       <p class="content-body">
-        {blok.title && (
+        {title && (
           <span
-            class="content-title"
-            style={titleHighlightColor ? `background-color: ${titleHighlightColor}` : undefined}
+            class:list={[
+              'content-title',
+              hasTitleHighlight && 'content-title--highlighted',
+            ]}
+            style={hasTitleHighlight ? `--title-highlight-color: ${titleHighlightColor}` : undefined}
           >
-            {blok.title}
+            <strong>{title}</strong>
           </span>
         )}
-        {blok.title && copyFirst && <> </>}
-        {copyFirst && <span set:html={copyFirst} />}
+        {title && copyInline && ' '}
+        {copyInline && <span set:html={copyInline} />}
       </p>
       {copyRest && <div class="content-body-rest" set:html={copyRest} />}
     </>
@@ -55,7 +61,22 @@ const { first: copyFirst, rest: copyRest } = splitRichTextParagraphs(copyHtml);
   }
 
   .content-title {
+    display: inline;
+    font-weight: inherit;
+  }
+
+  .content-title strong {
     font-weight: 700;
+  }
+
+  .content-title--highlighted {
+    display: inline-block;
+    line-height: 1;
+    vertical-align: baseline;
+    background-color: var(--title-highlight-color);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding: 0;
   }
 
   .content-body-rest {
