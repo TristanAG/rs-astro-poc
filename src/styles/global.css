@@ -317,7 +317,7 @@ h3 {
 .four-fixed-nav__label-line {
   display: block;
   width: 100%;
-  line-height: 12px;
+  line-height: 14px;
 
 }
 
@@ -396,7 +396,7 @@ h3 {
 
   .four-fixed-nav.active {
     display: block;
-    height: 53px;
+    height: 56px;
   }
 
   .four-fixed-nav.active ul {
