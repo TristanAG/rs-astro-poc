@@ -7,13 +7,16 @@ const consIcon =
 ---
 
 <li {...storyblokEditable(blok)}>
-  <div class="pro-con-text">
+  <div
+    class="pro-con-text"
+    style={{ '--consIconBackground': `url('${consIcon}')` }}
+  >
     {blok.con_lead && <span>{blok.con_lead}</span>}
     {blok.con}
   </div>
 </li>
 
-<style define:vars={{ consIcon }}>
+<style>
   li {
     position: relative;
     padding-left: 44px;
@@ -31,6 +34,6 @@ const consIcon =
     left: -44px;
     width: 28px;
     height: 28px;
-    background: url(var(--consIcon)) no-repeat center / contain;
+    background: var(--consIconBackground) no-repeat center / contain;
   }
 </style>

@@ -7,13 +7,16 @@ const prosIcon =
 ---
 
 <li {...storyblokEditable(blok)}>
-  <div class="pro-con-text">
+  <div
+    class="pro-con-text"
+    style={{ '--prosIconBackground': `url('${prosIcon}')` }}
+  >
     {blok.pro_lead && <span>{blok.pro_lead}</span>}
     {blok.pro}
   </div>
 </li>
 
-<style define:vars={{ prosIcon }}>
+<style>
   li {
     position: relative;
     padding-left: 44px;
@@ -31,7 +34,7 @@ const prosIcon =
     left: -44px;
     width: 28px;
     height: 28px;
-    background: url(var(--prosIcon)) no-repeat center / contain;
+    background: var(--prosIconBackground) no-repeat center / contain;
   }
 
   @media (max-width: 639px) {
