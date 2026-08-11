@@ -249,6 +249,7 @@ h3 {
   padding: 0 8px;
   background: #ebebeb;
   border-right: 1px solid #fff;
+  text-transform: uppercase;
 }
 
 .four-fixed-nav li:last-child {
@@ -335,7 +336,7 @@ h3 {
 
   .four-fixed-nav.active {
     display: block;
-    height: 60px;
+    height: 53px;
   }
 
   .four-fixed-nav.active a {
