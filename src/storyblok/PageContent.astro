@@ -38,10 +38,19 @@ const whatAreTheyAboutTitleId = blok.what_are_they_about_title_id?.trim() || und
   <div set:html={content_area_three} />
 </section>
 
-<style>
+<style is:global>
   .page-content {
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .page-content a,
+  .page-content a:visited,
+  .page-content a:hover,
+  .page-content a:focus,
+  .page-content a:active {
+    color: inherit;
+    text-decoration: none;
   }
 
   /* h3 {
