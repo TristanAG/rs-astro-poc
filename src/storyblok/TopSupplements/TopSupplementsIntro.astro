@@ -9,11 +9,7 @@ const titleId = blok.title_id?.trim() || undefined;
 
 <section
   {...storyblokEditable(blok)}
-  class:list={[
-    'top-supplements-intro',
-    titleId && 'target',
-    blok.mobile_nav_target && 'mobmenu_target',
-  ]}
+  class:list={[titleId && 'target', blok.mobile_nav_target && 'mobmenu_target']}
   id={titleId}
 >
   {top_5_image?.filename && (
@@ -23,16 +19,24 @@ const titleId = blok.title_id?.trim() || undefined;
       alt={top_5_image.alt || ''}
     />
   )}
-  {blok.title && <h2>{blok.title}</h2>}
-  {blok.copy && <div set:html={copy}></div>}
+  <div class="top-supplements-intro">
+    {blok.title && <h2>{blok.title}</h2>}
+    {blok.copy && <div set:html={copy}></div>}
+  </div>
 </section>
 
 <style>
   .top-supplements-intro__image {
     display: block;
     margin: 0 auto;
+    width: 20%;
     max-width: 100%;
     height: auto;
+    margin-bottom: 8px;
+  }
+
+  .top-supplements-intro {
+    position: relative;
   }
 
   h2 {
@@ -40,11 +44,27 @@ const titleId = blok.title_id?.trim() || undefined;
     font-size: 36px;
     line-height: 40px;
     color: #000;
-    margin-bottom: 34px;
+    margin: 0 0 34px;
     text-align: center;
   }
 
   @media (max-width: 767px) {
+    .top-supplements-intro {
+      padding-top: 25px;
+    }
+
+    .top-supplements-intro::before {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      display: block;
+      width: 48px;
+      height: 3px;
+      transform: translateX(-50%);
+      background: #000;
+      content: "";
+    }
+
     h2 {
       font-size: 22px;
       line-height: 28px;
