@@ -262,7 +262,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 0;
+  flex: 24 1 0;
   min-width: 0;
   width: 0;
   height: 100%;
@@ -280,6 +280,7 @@ h3 {
 }
 
 .four-fixed-nav li:last-child {
+  flex: 28 1 0;
   border-right: 0;
 }
 
@@ -396,7 +397,7 @@ h3 {
 
   .four-fixed-nav.active {
     display: block;
-    height: 56px;
+    height: 42px;
   }
 
   .four-fixed-nav.active ul {
