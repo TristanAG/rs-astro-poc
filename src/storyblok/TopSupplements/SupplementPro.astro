@@ -7,31 +7,36 @@ const prosIcon =
 ---
 
 <li {...storyblokEditable(blok)}>
-  <img
-    src={prosIcon}
-    alt=""
-    width="28"
-    height="28"
-    class="pro-con-icon"
-    aria-hidden="true"
-  />
   <div class="pro-con-text">
     {blok.pro_lead && <span>{blok.pro_lead}</span>}
     {blok.pro}
   </div>
 </li>
 
-<style>
+<style define:vars={{ prosIcon }}>
   li {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    position: relative;
+    padding-left: 44px;
     list-style: none;
   }
 
-  .pro-con-icon {
-    flex-shrink: 0;
+  .pro-con-text {
+    position: relative;
+  }
+
+  .pro-con-text::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: -44px;
     width: 28px;
     height: 28px;
+    background: url(var(--prosIcon)) no-repeat center / contain;
+  }
+
+  @media (max-width: 639px) {
+    .pro-con-text::before {
+      top: 0;
+    }
   }
 </style>

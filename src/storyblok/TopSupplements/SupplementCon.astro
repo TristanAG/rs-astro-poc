@@ -7,31 +7,30 @@ const consIcon =
 ---
 
 <li {...storyblokEditable(blok)}>
-  <img
-    src={consIcon}
-    alt=""
-    width="28"
-    height="28"
-    class="pro-con-icon"
-    aria-hidden="true"
-  />
   <div class="pro-con-text">
     {blok.con_lead && <span>{blok.con_lead}</span>}
     {blok.con}
   </div>
 </li>
 
-<style>
+<style define:vars={{ consIcon }}>
   li {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    position: relative;
+    padding-left: 44px;
     list-style: none;
   }
 
-  .pro-con-icon {
-    flex-shrink: 0;
+  .pro-con-text {
+    position: relative;
+  }
+
+  .pro-con-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -44px;
     width: 28px;
     height: 28px;
+    background: url(var(--consIcon)) no-repeat center / contain;
   }
 </style>
