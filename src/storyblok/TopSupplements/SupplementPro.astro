@@ -1,7 +1,10 @@
 ---
 import { storyblokEditable } from '@storyblok/astro';
+import { renderHtmlField } from '../../utils/renderHtmlField';
 
 const { blok } = Astro.props;
+const { html: proLead } = renderHtmlField(blok.pro_lead);
+const { html: pro } = renderHtmlField(blok.pro);
 const prosIcon =
   'https://a.storyblok.com/f/293683996317857/28x28/8906970e00/pros.webp';
 ---
@@ -11,8 +14,8 @@ const prosIcon =
     class="pro-con-text"
     style={{ '--prosIconBackground': `url('${prosIcon}')` }}
   >
-    {blok.pro_lead && <span>{blok.pro_lead}</span>}
-    {blok.pro}
+    {proLead && <span class="pro-lead" set:html={proLead} />}
+    {pro && <span class="pro-copy" set:html={pro} />}
   </div>
 </li>
 
@@ -25,6 +28,16 @@ const prosIcon =
 
   .pro-con-text {
     position: relative;
+  }
+
+  .pro-con-text :global(p) {
+    margin: 0;
+    display: inline;
+  }
+
+  .pro-lead :global(strong),
+  .pro-lead :global(b) {
+    font-weight: 700;
   }
 
   .pro-con-text::before {
