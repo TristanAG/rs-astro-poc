@@ -318,6 +318,7 @@ h3 {
   display: block;
   width: 100%;
   line-height: 12px;
+  white-space: nowrap;
 }
 
 .four-fixed-nav li.emphasized a {
