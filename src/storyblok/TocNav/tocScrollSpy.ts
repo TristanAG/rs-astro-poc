@@ -243,7 +243,7 @@ function handleDocumentClick(event: Event) {
   if (!(event.target instanceof Element)) return;
 
   const link = event.target.closest<HTMLAnchorElement>(
-    '[data-toc-link], [data-four-fixed-nav] a[data-section-id]',
+    '[data-toc-link], [data-four-fixed-nav] a[data-section-id], .three-col-header-item[data-section-id]',
   );
   if (!link) return;
 

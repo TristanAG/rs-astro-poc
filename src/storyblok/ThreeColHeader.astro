@@ -4,9 +4,9 @@ import { storyblokEditable } from '@storyblok/astro';
 const { blok } = Astro.props;
 
 const columns = [
-  { image: blok.image_one, text: blok.text_one },
-  { image: blok.image_two, text: blok.text_two },
-  { image: blok.image_three, text: blok.text_three },
+  { image: blok.image_one, text: blok.text_one, anchor: blok.anchor_one?.trim() },
+  { image: blok.image_two, text: blok.text_two, anchor: blok.anchor_two?.trim() },
+  { image: blok.image_three, text: blok.text_three, anchor: blok.anchor_three?.trim() },
 ];
 ---
 
@@ -14,18 +14,32 @@ const columns = [
   {blok.title && <h2 class="three-col-header-title">{blok.title}</h2>}
 
   <div class="three-col-header-grid">
-    {columns.map((column) => (
-      <div class="three-col-header-item">
-        {column.image?.filename && (
-          <img
-            class="three-col-header-image"
-            src={column.image.filename}
-            alt={column.image.alt || ''}
-          />
-        )}
-        {column.text && <p class="three-col-header-text">{column.text}</p>}
-      </div>
-    ))}
+    {columns.map((column) => {
+      const content = (
+        <>
+          {column.image?.filename && (
+            <img
+              class="three-col-header-image"
+              src={column.image.filename}
+              alt={column.image.alt || ''}
+            />
+          )}
+          {column.text && <p class="three-col-header-text">{column.text}</p>}
+        </>
+      );
+
+      return column.anchor ? (
+        <a
+          class="three-col-header-item"
+          href={`#${column.anchor}`}
+          data-section-id={column.anchor}
+        >
+          {content}
+        </a>
+      ) : (
+        <div class="three-col-header-item">{content}</div>
+      );
+    })}
   </div>
 </section>
 
@@ -67,6 +81,21 @@ const columns = [
     width: 100%;
     height: 140px;
     border-radius: 5px;
+  }
+
+  a.three-col-header-item {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  a.three-col-header-item:hover {
+    background-color: #f5f7fb;
+  }
+
+  a.three-col-header-item:focus-visible {
+    outline: 3px solid rgba(29, 48, 76, 0.35);
+    outline-offset: 2px;
   }
 
   .three-col-header-image {
