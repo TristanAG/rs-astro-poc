@@ -1,5 +1,9 @@
 @import "@picocss/pico/css/pico.min.css";
 
+html {
+    color-scheme: light only;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
 }
