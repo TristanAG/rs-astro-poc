@@ -6,6 +6,8 @@ import { useStoryblokApi } from '@storyblok/astro';
 
 const storyblokApi = useStoryblokApi();
 
+Astro.response.headers.set('Cache-Control', 'no-store');
+
 const [{ data }, { data: settingsData }] = await Promise.all([
   storyblokApi.get('cdn/stories', {
     version: 'draft',

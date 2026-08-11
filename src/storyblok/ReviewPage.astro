@@ -92,9 +92,9 @@ const isLargeParagraphFont = blok.paragraph_font_size === 'large';
     afterFullWidth.length > 0 &&
       (hasToc && tocBlock ? (
         <section class="main-container padding-top-30" id="content_main">
-          <div class="container">
-            <FourFixedMobileNav mobileNavItems={tocBlock.mobile_nav_items} />
+          <FourFixedMobileNav mobileNavItems={tocBlock.mobile_nav_items} />
 
+          <div class="container">
             <div class="sub-container">
               <TocSidebar blok={tocBlock} />
 

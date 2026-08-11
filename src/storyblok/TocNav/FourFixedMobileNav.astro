@@ -23,7 +23,16 @@ const revealTargetId = items[0]?.sectionId ?? '';
       items.map((item) => (
         <li class:list={{ emphasized: item.emphasized }}>
           <a href={`#${item.sectionId}`} data-section-id={item.sectionId}>
-            {item.label}
+            {
+              item.labelSecondLine ? (
+                <span class="four-fixed-nav__label">
+                  <span class="four-fixed-nav__label-line">{item.label}</span>
+                  <span class="four-fixed-nav__label-line">{item.labelSecondLine}</span>
+                </span>
+              ) : (
+                item.label
+              )
+            }
           </a>
         </li>
       ))

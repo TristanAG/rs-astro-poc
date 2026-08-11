@@ -26,6 +26,13 @@ export default defineConfig({
     storyblok({
       accessToken,
       livePreview: true,
+      apiOptions: {
+        cache: {
+          // Default is clear: 'manual', which keeps serving stale draft content.
+          clear: isDev ? 'auto' : 'onpreview',
+          type: isDev ? 'none' : 'memory',
+        },
+      },
     }),
   ],
   vite: {

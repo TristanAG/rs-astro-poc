@@ -147,9 +147,10 @@ h3 {
 .sub-container {
   position: relative;
   max-width: 990px;
+  width: 100%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 725px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 725px) minmax(0, 1fr);
   column-gap: 58px;
   align-items: start;
 }
@@ -157,7 +158,7 @@ h3 {
 .left-contents {
   grid-column: 1;
   grid-row: 1;
-  width: 725px;
+  width: 100%;
   max-width: 725px;
   min-width: 0;
   position: relative;
@@ -229,6 +230,12 @@ h3 {
   left: 0;
   display: none;
   width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: clip;
+  justify-content: flex-start;
   border-top: 1px solid #d6d6d6;
   border-bottom: 1px solid #d6d6d6;
 }
@@ -236,28 +243,43 @@ h3 {
 .four-fixed-nav ul {
   display: flex;
   width: 100%;
+  max-width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.four-fixed-nav ul:first-of-type,
+.four-fixed-nav ul:last-of-type {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .four-fixed-nav li {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 24 1 0;
+  flex: 1 1 0;
   min-width: 0;
+  width: 0;
   height: 100%;
+  margin: 0;
   box-sizing: border-box;
-  padding: 0 8px;
+  padding: 0 4px;
   background: #ebebeb;
   border-right: 1px solid #fff;
   text-transform: uppercase;
 }
 
+.four-fixed-nav li::before {
+  content: none;
+  display: none;
+}
+
 .four-fixed-nav li:last-child {
-  flex: 28 1 0;
   border-right: 0;
 }
 
@@ -275,10 +297,27 @@ h3 {
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 14px;
   letter-spacing: -0.5px;
   text-align: center;
   text-decoration: none;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.four-fixed-nav__label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1px;
+}
+
+.four-fixed-nav__label-line {
+  display: block;
+  width: 100%;
+  line-height: 12px;
 }
 
 .four-fixed-nav li.emphasized a {
@@ -328,6 +367,22 @@ h3 {
 }
 
 @media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+
+  .main-container,
+  .main-container .container,
+  .sub-container,
+  .left-contents,
+  .review_details_sec {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   .toc {
     position: relative;
     display: none;
@@ -343,8 +398,8 @@ h3 {
     height: 53px;
   }
 
-  .four-fixed-nav.active a {
-    word-wrap: normal;
+  .four-fixed-nav.active ul {
+    height: 100%;
   }
 }
 

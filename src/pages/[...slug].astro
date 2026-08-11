@@ -8,6 +8,8 @@ import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
 const storyblokApi = useStoryblokApi();
 const slug = Astro.params.slug || 'home';
 
+Astro.response.headers.set('Cache-Control', 'no-store');
+
 const payload = await getPayload({
   locals: Astro.locals,
 });
