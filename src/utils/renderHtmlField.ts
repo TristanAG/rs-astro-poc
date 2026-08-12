@@ -48,6 +48,32 @@ function extractInlineStyles(html: string) {
   return { html: withoutStyles, css };
 }
 
+export function applyLinkTarget(html: string, openInNewWindow: boolean) {
+  if (!html) return html;
+
+  if (openInNewWindow) {
+    return html.replace(/<a\b([^>]*?)>/gi, (_match, attrs: string) => {
+      let nextAttrs = attrs;
+      if (/target\s*=/i.test(nextAttrs)) {
+        nextAttrs = nextAttrs.replace(
+          /target\s*=\s*["'][^"']*["']/gi,
+          'target="_blank"',
+        );
+      } else {
+        nextAttrs = `${nextAttrs} target="_blank" rel="noopener noreferrer"`;
+      }
+      if (!/rel\s*=/i.test(nextAttrs)) {
+        nextAttrs = `${nextAttrs} rel="noopener noreferrer"`;
+      }
+      return `<a${nextAttrs}>`;
+    });
+  }
+
+  return html
+    .replace(/\s*target\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/\s*rel\s*=\s*["']noopener\s+noreferrer["']/gi, '');
+}
+
 export function renderHtmlField(value: unknown) {
   if (!value) {
     return { html: '', css: '' };

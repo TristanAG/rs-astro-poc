@@ -1,10 +1,16 @@
 ---
 import { storyblokEditable, renderRichText } from '@storyblok/astro';
 import StoryblokComponent from '@storyblok/astro/StoryblokComponent.astro';
+import { partitionByColumn } from '../../utils/partitionByColumn';
+import { applyLinkTarget } from '../../utils/renderHtmlField';
 
 const { blok, rank = 1 } = Astro.props;
+const openInNewWindow = rank > 1;
 const product_image = blok.product_image;
-const why_we_chose_it = renderRichText(blok.why_we_chose_it);
+const why_we_chose_it = applyLinkTarget(
+  renderRichText(blok.why_we_chose_it),
+  openInNewWindow,
+);
 
 const categoryRatings = [
   { label: 'Predicted Effectiveness', value: blok.predicted_effectiveness },
@@ -54,17 +60,11 @@ const resolveLinkHref = (link: unknown) => {
 
 const productLink = blok.product_link;
 const productUrl = resolveLinkHref(productLink);
-const productLinkTarget =
-  typeof productLink === 'object' &&
-  productLink !== null &&
-  productLink.target === '_blank'
-    ? '_blank'
-    : undefined;
-const productLinkRel = productLinkTarget ? 'noopener noreferrer' : undefined;
-const productLinkAttrs = productLinkTarget
-  ? { target: productLinkTarget, rel: productLinkRel }
+const applyLinkToTopSection = Boolean(blok.apply_link);
+const productLinkAttrs = openInNewWindow
+  ? { target: '_blank' as const, rel: 'noopener noreferrer' }
   : {};
-const CardTag = productUrl ? 'a' : 'div';
+const CardTag = productUrl && applyLinkToTopSection ? 'a' : 'div';
 
 const formatRating = (value: unknown) => {
   const numeric = Number(value);
@@ -79,12 +79,8 @@ const toBarWidth = (value: unknown) => {
 
 const pros = blok.pros ?? [];
 const cons = blok.cons ?? [];
-const prosSplitIndex = Math.ceil(pros.length / 2);
-const prosLeft = pros.slice(0, prosSplitIndex);
-const prosRight = pros.slice(prosSplitIndex);
-const consSplitIndex = Math.ceil(cons.length / 2);
-const consLeft = cons.slice(0, consSplitIndex);
-const consRight = cons.slice(consSplitIndex);
+const { left: prosLeft, right: prosRight } = partitionByColumn(pros);
+const { left: consLeft, right: consRight } = partitionByColumn(cons);
 const remarks = blok.remarks || blok.disclaimer || '';
 const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || productUrl;
 ---
@@ -158,14 +154,14 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
             <div class="left">
               <ul>
                 {prosLeft.map((item: any) => (
-                  <StoryblokComponent blok={item} />
+                  <StoryblokComponent blok={item} rank={rank} />
                 ))}
               </ul>
             </div>
             <div class="right">
               <ul>
                 {prosRight.map((item: any) => (
-                  <StoryblokComponent blok={item} />
+                  <StoryblokComponent blok={item} rank={rank} />
                 ))}
               </ul>
             </div>
@@ -175,7 +171,7 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
           <div class="full-width-div">
             <ul>
               {prosLeft.map((item: any) => (
-                <StoryblokComponent blok={item} />
+                <StoryblokComponent blok={item} rank={rank} />
               ))}
             </ul>
           </div>
@@ -191,14 +187,14 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
             <div class="left">
               <ul>
                 {consLeft.map((item: any) => (
-                  <StoryblokComponent blok={item} />
+                  <StoryblokComponent blok={item} rank={rank} />
                 ))}
               </ul>
             </div>
             <div class="right">
               <ul>
                 {consRight.map((item: any) => (
-                  <StoryblokComponent blok={item} />
+                  <StoryblokComponent blok={item} rank={rank} />
                 ))}
               </ul>
             </div>
@@ -208,7 +204,7 @@ const showChoose = why_we_chose_it || blok.supplement_subtext || remarks || prod
           <div class="full-width-div">
             <ul>
               {consLeft.map((item: any) => (
-                <StoryblokComponent blok={item} />
+                <StoryblokComponent blok={item} rank={rank} />
               ))}
             </ul>
           </div>

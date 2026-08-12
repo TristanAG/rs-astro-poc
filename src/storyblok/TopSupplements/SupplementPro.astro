@@ -1,10 +1,13 @@
 ---
 import { storyblokEditable } from '@storyblok/astro';
-import { renderHtmlField } from '../../utils/renderHtmlField';
+import { applyLinkTarget, renderHtmlField } from '../../utils/renderHtmlField';
 
-const { blok } = Astro.props;
-const { html: proLead } = renderHtmlField(blok.pro_lead);
-const { html: pro } = renderHtmlField(blok.pro);
+const { blok, rank = 1 } = Astro.props;
+const openInNewWindow = rank > 1;
+const { html: proLeadRaw } = renderHtmlField(blok.pro_lead);
+const { html: proRaw } = renderHtmlField(blok.pro);
+const proLead = applyLinkTarget(proLeadRaw, openInNewWindow);
+const pro = applyLinkTarget(proRaw, openInNewWindow);
 const prosIcon =
   'https://a.storyblok.com/f/293683996317857/28x28/8906970e00/pros.webp';
 ---
